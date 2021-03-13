@@ -1,0 +1,292 @@
+{
+	"info": {
+		"_postman_id": "e352dc05-c9fc-4b7d-965d-d50ecd95ca38",
+		"name": "SpringBootExample",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "http://localhost:8500/soshiant/swagger-ui/",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8500/soshiant/get-customer-id?customer-id=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8500",
+					"path": [
+						"soshiant",
+						"get-customer-id"
+					],
+					"query": [
+						{
+							"key": "customer-id",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "registerCustomer",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"first-name\" : \"Test\",\r\n    \"last-name\" : \"Last Test\",\r\n    \"phone-number\" : \"7786362222\",\r\n    \"birth-date\" : \"1979-10-10\",\r\n    \"email-address\" : \"a@a.com\",\r\n    \"street-number\" : \"1867\",\r\n    \"street-name\" : \"Main St\",\r\n    \"city\" : \"Vancouver\",\r\n    \"state\" : \"BC\",    \r\n    \"country\" : \"CA\",\r\n    \"zip-code\" : \"V3X4K8\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8500/soshiant/sbe/register-customer",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8500",
+					"path": [
+						"soshiant",
+						"sbe",
+						"register-customer"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Customer email",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8500/soshiant/sbe/update-email?customer-id=1&email-address=test@yahoo.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8500",
+					"path": [
+						"soshiant",
+						"sbe",
+						"update-email"
+					],
+					"query": [
+						{
+							"key": "customer-id",
+							"value": "1"
+						},
+						{
+							"key": "email-address",
+							"value": "test@yahoo.com"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Customer Info",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"customer-id\" : \"1\",\r\n    \"first-name\" : \"New Name\",\r\n    \"last-name\" : \"new Last name\",\r\n    \"phone-number\" : \"7786361111\",\r\n    \"birth-date\" : \"1979-10-10\",\r\n    \"email-address\" : \"a@a.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8500/soshiant/sbe/update-customer",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8500",
+					"path": [
+						"soshiant",
+						"sbe",
+						"update-customer"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get-CustomerByCustomerId",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8500/soshiant/sbe/customer-info?customer-id=2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8500",
+					"path": [
+						"soshiant",
+						"sbe",
+						"customer-info"
+					],
+					"query": [
+						{
+							"key": "customer-id",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get-CustomerByCustomerName",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8500/soshiant/sbe/customer-info?first-name=Hamid&last-name=Ghorbani",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8500",
+					"path": [
+						"soshiant",
+						"sbe",
+						"customer-info"
+					],
+					"query": [
+						{
+							"key": "first-name",
+							"value": "Hamid"
+						},
+						{
+							"key": "last-name",
+							"value": "Ghorbani"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get-Customer List by Id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8500/soshiant/sbe/customer-info?customer-ids=1,2,3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8500",
+					"path": [
+						"soshiant",
+						"sbe",
+						"customer-info"
+					],
+					"query": [
+						{
+							"key": "customer-ids",
+							"value": "1,2,3"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get-All-Customers",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8500/soshiant/sbe/customer-info",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8500",
+					"path": [
+						"soshiant",
+						"sbe",
+						"customer-info"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "register Employee",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"first-name\" : \"Test\",\r\n    \"last-name\" : \"Last Test\",\r\n    \"phone-number\" : \"7786362222\",\r\n    \"birth-date\" : \"1979-10-10\",\r\n    \"email-address\" : \"a@a.com\",\r\n    \"street-number\" : \"1867\",\r\n    \"street-name\" : \"Main St\",\r\n    \"city\" : \"Vancouver\",\r\n    \"state\" : \"BC\",    \r\n    \"country\" : \"Canada\",\r\n    \"zip-code\" : \"V3X4K8\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8500/soshiant/sbe/register-employee",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8500",
+					"path": [
+						"soshiant",
+						"sbe",
+						"register-employee"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get-employee",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8500/soshiant/sbe/customer-info",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8500",
+					"path": [
+						"soshiant",
+						"sbe",
+						"customer-info"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
