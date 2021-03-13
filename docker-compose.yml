@@ -1,0 +1,22 @@
+version: '3.3'
+services:
+  springbootexample:
+    image: springbootexample:latest
+    container_name: springbootexample
+    build:
+        context: .
+        dockerfile: Dockerfile
+    restart: always
+    environment:
+      - DB_NAME=testdb
+      - DB_USERNAME=sa
+      - DB_PASSWORD=sa
+      - DRIVER_CLASS_NAME=org.h2.Driver
+      - DATABASE_PLATFORM=org.hibernate.dialect.H2Dialect
+      - PRIVATE_KEY_PATH=/home/rsa_1024_priv.pem
+      - PEM_KEY_PASSWORD=test
+      - CIPHER_TYPE=RSA/ECB/OAEPWithSHA1AndMGF1Padding
+      - APPLICATION_LOG_LEVEL=INFO
+    ports:
+      - 8500:8500
+    command: ["-Xmx256M"]
