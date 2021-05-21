@@ -14,7 +14,7 @@ import static org.mockito.ArgumentMatchers.isNotNull;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import com.soshiant.springbootexample.dto.CustomerDto;
+import com.soshiant.springbootexample.dto.CustomerRequestDto;
 import com.soshiant.springbootexample.dto.CustomerUpdateDto;
 import com.soshiant.springbootexample.entity.Customer;
 import com.soshiant.springbootexample.exception.CustomerServiceException;
@@ -77,7 +77,7 @@ class CustomerServiceImplTest {
 
     Throwable thrown = assertThrows(
         CustomerServiceException.class,
-        () -> customerService.registerCustomer(new CustomerDto()));
+        () -> customerService.registerCustomer(new CustomerRequestDto()));
 
     assertEquals("QueryTimeout Exception",thrown.getMessage());
 

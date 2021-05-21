@@ -1,6 +1,7 @@
 package com.soshiant.springbootexample.repository;
 
 import com.soshiant.springbootexample.entity.Customer;
+import com.soshiant.springbootexample.entity.UserInfo;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -44,6 +45,14 @@ public interface CustomerRepository extends JpaRepository<Customer, Long>  {
    * @param emailAddress customer's email address
    */
   Optional<Customer> findByEmailAddress(String emailAddress);
+
+
+  /**
+   * retrieves a customer info from database based on the username
+   *
+   * @param username customer's username
+   */
+  Optional<Customer> findByUserInfo_Username(@Param("username") String username);
 
   /**
    * retrieves a Employee info from database based on its email address

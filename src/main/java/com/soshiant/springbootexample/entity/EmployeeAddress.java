@@ -1,6 +1,5 @@
 package com.soshiant.springbootexample.entity;
 
-import java.time.LocalDateTime;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;

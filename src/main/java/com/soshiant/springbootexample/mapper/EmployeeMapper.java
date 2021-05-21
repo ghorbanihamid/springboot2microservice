@@ -1,6 +1,6 @@
 package com.soshiant.springbootexample.mapper;
 
-import com.soshiant.springbootexample.dto.EmployeeDto;
+import com.soshiant.springbootexample.dto.EmployeeRequestDto;
 import com.soshiant.springbootexample.entity.Employee;
 import com.soshiant.springbootexample.entity.EmployeeAddress;
 import java.time.LocalDateTime;
@@ -17,9 +17,9 @@ import org.mapstruct.ReportingPolicy;
 public abstract class EmployeeMapper {
 
 
-  public abstract Employee toEmployee(EmployeeDto dto);
+  public abstract Employee toEmployee(EmployeeRequestDto dto);
 
-  List<EmployeeAddress> mapToListOfAddresses(EmployeeDto customerDto) {
+  List<EmployeeAddress> mapToListOfAddresses(EmployeeRequestDto customerDto) {
 
     List<EmployeeAddress> list = new ArrayList<>();
     if (customerDto == null) {
@@ -34,7 +34,7 @@ public abstract class EmployeeMapper {
   @Mapping( source = "city",         target = "cityName")
   @Mapping( source = "state",        target = "stateName")
   @Mapping( source = "country",      target = "countryName")
-  public abstract EmployeeAddress mapToAddress(EmployeeDto dto);
+  public abstract EmployeeAddress mapToAddress(EmployeeRequestDto dto);
 
 
   @Mapping( source = "city", target = "cityName")
@@ -45,11 +45,11 @@ public abstract class EmployeeMapper {
   @Mapping( source = "phoneNumber", target = "employee.phoneNumber")
   @Mapping( source = "emailAddress", target = "employee.emailAddress")
   @Mapping( source = "birthDate", target = "employee.birthDate")
-  public abstract EmployeeAddress toEmployeeWithAddress(EmployeeDto dto);
+  public abstract EmployeeAddress toEmployeeWithAddress(EmployeeRequestDto dto);
 
   @Mapping( source = "address.cityName", target = "city")
   @Mapping( source = "address.stateName", target = "state")
   @Mapping( source = "address.countryName", target = "country")
-  public abstract EmployeeDto toEmployeeDto(Employee employee, EmployeeAddress address);
+  public abstract EmployeeRequestDto toEmployeeDto(Employee employee, EmployeeAddress address);
 
 }

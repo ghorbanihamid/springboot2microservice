@@ -1,5 +1,6 @@
 package com.soshiant.springbootexample.entity;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,7 +27,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Entity
 @Table(name = "CUSTOMERS", schema = "CST")
-public class Customer {
+public class Customer implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,6 +54,10 @@ public class Customer {
 
   @Column(name = "MODIFIED_DATE",nullable = true, updatable = true)
   private LocalDateTime modifiedDate;
+
+  @OneToOne(targetEntity= UserInfo.class,cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID")
+  private UserInfo userInfo;
 
   @OneToMany(targetEntity= CustomerAddress.class, cascade = CascadeType.ALL,
              fetch = FetchType.LAZY, orphanRemoval = true)

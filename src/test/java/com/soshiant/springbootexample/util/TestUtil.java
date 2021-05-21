@@ -4,11 +4,12 @@ package com.soshiant.springbootexample.util;
 import static com.soshiant.springbootexample.util.AppTestConstants.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.soshiant.springbootexample.dto.CustomerDto;
-import com.soshiant.springbootexample.dto.EmployeeDto;
+import com.soshiant.springbootexample.dto.CustomerRequestDto;
+import com.soshiant.springbootexample.dto.EmployeeRequestDto;
 import com.soshiant.springbootexample.entity.Customer;
 import com.soshiant.springbootexample.entity.Employee;
 import com.soshiant.springbootexample.entity.EmployeeAddress;
+import com.soshiant.springbootexample.entity.UserInfo;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -20,9 +21,9 @@ public class TestUtil {
 
 
 
-  public static CustomerDto buildCustomerDto() {
+  public static CustomerRequestDto buildCustomerDto() {
 
-    return new CustomerDto(
+    return new CustomerRequestDto(
         FIRST_NAME,
         LAST_NAME,
         PHONE_NUMBER,
@@ -34,7 +35,9 @@ public class TestUtil {
         CITY,
         STATE,
         COUNTRY,
-        ZIP_CODE
+        ZIP_CODE,
+        "test",
+        "test"
     );
   }
 
@@ -63,13 +66,14 @@ public class TestUtil {
             DateTimeFormatter.ofPattern(AppTestConstants.BIRTH_DATE_FORMAT)),
         currentDateTimeInPST.toLocalDateTime(),
         null,
+        new UserInfo(),
         new ArrayList<>()
     );
   }
 
-  public static EmployeeDto buildEmployeeDto() {
+  public static EmployeeRequestDto buildEmployeeDto() {
 
-    return new EmployeeDto(
+    return new EmployeeRequestDto(
         FIRST_NAME,
         LAST_NAME,
         PHONE_NUMBER,

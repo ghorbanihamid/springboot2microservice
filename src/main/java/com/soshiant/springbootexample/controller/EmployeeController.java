@@ -1,7 +1,6 @@
 package com.soshiant.springbootexample.controller;
 
-import com.soshiant.springbootexample.dto.EmployeeDto;
-import com.soshiant.springbootexample.entity.Employee;
+import com.soshiant.springbootexample.dto.EmployeeRequestDto;
 import com.soshiant.springbootexample.entity.EmployeeAddress;
 import com.soshiant.springbootexample.service.EmployeeService;
 import com.soshiant.springbootexample.util.ResponseUtil;
@@ -35,7 +34,7 @@ public class EmployeeController {
   /**
    * processes a received <b>register Employee</b> request
    *
-   * @param employeeDto employee info
+   * @param employeeRequestDto employee info
    * @return ResponseEntity
    */
   @ApiOperation(value = "Processes incoming register employee")
@@ -43,14 +42,14 @@ public class EmployeeController {
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseBody
-  public  ResponseEntity<Object> registerNewEmployee(@Valid @RequestBody EmployeeDto employeeDto) {
-    log.info("Received a register-employee [{}]...", employeeDto);
+  public  ResponseEntity<Object> registerNewEmployee(@Valid @RequestBody EmployeeRequestDto employeeRequestDto) {
+    log.info("Received a register-employee [{}]...", employeeRequestDto);
 
     try {
-      EmployeeAddress savedEmployee = employeeService.registerEmployee(employeeDto);
+      EmployeeAddress savedEmployee = employeeService.registerEmployee(employeeRequestDto);
 
       if (savedEmployee == null) {
-        log.error("couldn't register new employee {}", employeeDto);
+        log.error("couldn't register new employee {}", employeeRequestDto);
         return new ResponseEntity<>(
             ResponseUtil.createErrorResponse("couldn't register new employee!",null),
             HttpStatus.EXPECTATION_FAILED);
@@ -85,7 +84,7 @@ public class EmployeeController {
     log.info("Received a get-employee [{}]...", employeeId);
 
     try {
-      EmployeeDto employeeInfo = employeeService.getEmployee(employeeId);
+      EmployeeRequestDto employeeInfo = employeeService.getEmployee(employeeId);
 
       if (employeeInfo == null) {
         log.error("couldn't get employee with Id {}", employeeId);

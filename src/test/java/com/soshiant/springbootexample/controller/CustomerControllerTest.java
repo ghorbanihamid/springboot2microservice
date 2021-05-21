@@ -11,9 +11,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.soshiant.springbootexample.dto.CustomerDto;
+import com.soshiant.springbootexample.dto.CustomerRequestDto;
 import com.soshiant.springbootexample.entity.Customer;
+import com.soshiant.springbootexample.filter.AuthenticationFilter;
 import com.soshiant.springbootexample.service.CustomerService;
+import com.soshiant.springbootexample.service.UserService;
 import com.soshiant.springbootexample.util.TestUtil;
 import com.soshiant.springbootexample.util.ValidatorTestUtil;
 import java.util.ArrayList;
@@ -46,6 +48,12 @@ class CustomerControllerTest {
 
   @MockBean
   private CustomerService customerService;
+
+  @MockBean
+  private UserService userService;
+
+  @MockBean
+  private AuthenticationFilter authenticationFilter;
 
   @Autowired
   private MockMvc mockMvc;
@@ -88,7 +96,7 @@ class CustomerControllerTest {
   void testRegisterNewCustomerIsSuccess() throws Exception {
 
     Customer customer = TestUtil.buildCustomerObject();
-    when(customerService.registerCustomer(any(CustomerDto.class))).thenReturn(customer);
+    when(customerService.registerCustomer(any(CustomerRequestDto.class))).thenReturn(customer);
 
     mockMvc.perform(post("/register-customer")
         .content(TestUtil.buildCustomerDtoAsJson())
@@ -96,14 +104,14 @@ class CustomerControllerTest {
         .andDo(print())
         .andExpect(status().isOk());
 
-    verify(customerService).registerCustomer(isA(CustomerDto.class));
+    verify(customerService).registerCustomer(isA(CustomerRequestDto.class));
   }
 
   @Test
   @DisplayName("Test register customer request failed")
   void testRegisterNewCustomerIsFailed() throws Exception {
 
-    when(customerService.registerCustomer(any(CustomerDto.class))).thenReturn(null);
+    when(customerService.registerCustomer(any(CustomerRequestDto.class))).thenReturn(null);
 
     mockMvc.perform(post("/register-customer")
         .content(TestUtil.buildCustomerDtoAsJson())
@@ -111,7 +119,7 @@ class CustomerControllerTest {
         .andDo(print())
         .andExpect(status().isExpectationFailed());
 
-    verify(customerService).registerCustomer(isA(CustomerDto.class));
+    verify(customerService).registerCustomer(isA(CustomerRequestDto.class));
   }
 
 }

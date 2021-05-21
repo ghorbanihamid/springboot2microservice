@@ -1,8 +1,9 @@
 package com.soshiant.springbootexample.service.impl;
 
-import com.soshiant.springbootexample.dto.CustomerDto;
+import com.soshiant.springbootexample.dto.CustomerRequestDto;
 import com.soshiant.springbootexample.dto.CustomerUpdateDto;
 import com.soshiant.springbootexample.entity.Customer;
+import com.soshiant.springbootexample.entity.UserInfo;
 import com.soshiant.springbootexample.exception.CustomerServiceException;
 import com.soshiant.springbootexample.mapper.CustomerMapper;
 import com.soshiant.springbootexample.repository.CustomerRepository;
@@ -13,6 +14,7 @@ import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
@@ -29,19 +31,23 @@ public class CustomerServiceImpl implements CustomerService {
   @Autowired
   private CustomerRepository customerRepository;
 
+  @Autowired
+  private PasswordEncoder passwordEncoder;
+
   @Override
-  public Customer registerCustomer(CustomerDto customerDto) throws CustomerServiceException {
-    log.info("register new customer {}", customerDto);
+  public Customer registerCustomer(CustomerRequestDto customerRequestDto) throws CustomerServiceException {
+    log.info("register new customer {}", customerRequestDto);
 
     Customer customerInfo;
     try {
-      customerInfo = customerMapper.toCustomer(customerDto);
+      customerRequestDto.setPassword(passwordEncoder.encode(customerRequestDto.getPassword()));
+      customerInfo = customerMapper.toCustomer(customerRequestDto);
       return customerRepository.save(customerInfo);
 
     } catch (Exception e) {
       log.error(
           "Exception occurred during registerCustomer method for customerDto : {} with message :{} ",
-          customerDto, e.getCause());
+          customerRequestDto, e.getCause());
       throw new CustomerServiceException(e.getMessage());
     }
   }
@@ -91,7 +97,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     List<Customer> customerList;
     try {
-      if(customerIds.isEmpty()){
+      if(customerIds == null || customerIds.isEmpty()){
         customerList = customerRepository.findAll();
       }
       else if (customerIds.size() == 1) {
@@ -140,6 +146,21 @@ public class CustomerServiceImpl implements CustomerService {
     } catch (Exception e){
       log.error(
         "Exception in getCustomer, phoneNumber: {}, message: {}. ", phoneNumber, e.getMessage());
+      throw new CustomerServiceException(e.getMessage());
+    }
+
+  }
+
+  @Override
+  public Customer getCustomerByUsername(String username) throws CustomerServiceException {
+
+    try {
+      Optional<Customer> customerOptional = customerRepository.findByUserInfo_Username(username);
+      return (customerOptional.orElse(null));
+
+    } catch (Exception e){
+      log.error(
+        "Exception in getCustomer, phoneNumber: {}, message: {}. ", username, e.getMessage());
       throw new CustomerServiceException(e.getMessage());
     }
 

@@ -9,8 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 
-import com.soshiant.springbootexample.dto.EmployeeDto;
-import com.soshiant.springbootexample.entity.Employee;
+import com.soshiant.springbootexample.dto.EmployeeRequestDto;
 import com.soshiant.springbootexample.entity.EmployeeAddress;
 import com.soshiant.springbootexample.exception.EmployeeServiceException;
 import com.soshiant.springbootexample.repository.EmployeeAddressesRepository;
@@ -86,7 +85,7 @@ class EmployeeServiceImplTest {
         .thenReturn(Optional.of(TestUtil.buildEmployeeObject()));
 
 
-    EmployeeDto employee = employeeService.getEmployee(EMPLOYEE_ID);
+    EmployeeRequestDto employee = employeeService.getEmployee(EMPLOYEE_ID);
 
     assertThat(employee, is(notNullValue()));
 
@@ -98,7 +97,7 @@ class EmployeeServiceImplTest {
     Mockito.when(employeeRepository.findById(EMPLOYEE_ID))
         .thenReturn(Optional.empty());
 
-    EmployeeDto employee = employeeService.getEmployee(EMPLOYEE_ID);
+    EmployeeRequestDto employee = employeeService.getEmployee(EMPLOYEE_ID);
 
     assertThat(employee, is(nullValue()));
 

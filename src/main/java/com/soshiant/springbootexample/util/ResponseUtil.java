@@ -1,6 +1,7 @@
 package com.soshiant.springbootexample.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.soshiant.springbootexample.dto.LoginResponseDto;
 import com.soshiant.springbootexample.dto.ResponseDto;
 import lombok.extern.slf4j.Slf4j;
 
@@ -9,6 +10,11 @@ public class ResponseUtil {
 
   private ResponseUtil() {
 
+  }
+
+  public static String createLoginSuccessResponse(LoginResponseDto loginResponseDto) {
+
+    return new ResponseDto("SUCCESS","",loginResponseDto).toString();
   }
 
   public static String createSuccessResponse(String message, String detail) {

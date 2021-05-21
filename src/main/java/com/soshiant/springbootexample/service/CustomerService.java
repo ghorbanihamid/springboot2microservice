@@ -1,7 +1,7 @@
 package com.soshiant.springbootexample.service;
 
 
-import com.soshiant.springbootexample.dto.CustomerDto;
+import com.soshiant.springbootexample.dto.CustomerRequestDto;
 import com.soshiant.springbootexample.dto.CustomerUpdateDto;
 import com.soshiant.springbootexample.entity.Customer;
 import com.soshiant.springbootexample.exception.CustomerServiceException;
@@ -15,10 +15,10 @@ import java.util.List;
 public interface CustomerService {
 
   /**
-   * @param customerDto customer object
+   * @param customerRequestDto customer object
    * @return CustomerId CustomerId
    */
-  Customer registerCustomer(CustomerDto customerDto) throws CustomerServiceException;
+  Customer registerCustomer(CustomerRequestDto customerRequestDto) throws CustomerServiceException;
 
   /**
    * @param customerId customer Id
@@ -51,5 +51,11 @@ public interface CustomerService {
    * @return Customer Customer Object
    */
   Customer getCustomer(String phoneNumber) throws CustomerServiceException;
+
+  /**
+   * @param username username
+   * @return Customer Customer Object
+   */
+  Customer getCustomerByUsername(String username) throws CustomerServiceException;
 
 }

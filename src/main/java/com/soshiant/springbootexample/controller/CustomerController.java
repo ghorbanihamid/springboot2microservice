@@ -1,6 +1,9 @@
 package com.soshiant.springbootexample.controller;
 
-import com.soshiant.springbootexample.dto.CustomerDto;
+import static com.soshiant.springbootexample.util.AppConstants.INTERNAL_SERVER_ERROR_MESSAGE;
+import static com.soshiant.springbootexample.util.AppConstants.NEW_CUSTOMER_ERROR_MESSAGE;
+
+import com.soshiant.springbootexample.dto.CustomerRequestDto;
 import com.soshiant.springbootexample.dto.CustomerUpdateDto;
 import com.soshiant.springbootexample.entity.Customer;
 import com.soshiant.springbootexample.exception.CustomerServiceException;
@@ -40,7 +43,7 @@ public class CustomerController {
   /**
    * processes a received <b>register-customer</b> request
    *
-   * @param customerDto customer info
+   * @param customerRequestDto customer info
    * @return nothing
    */
   @ApiOperation(value = "Processes incoming register customer")
@@ -48,27 +51,30 @@ public class CustomerController {
                consumes = MediaType.APPLICATION_JSON_VALUE,
                produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseBody
-  public ResponseEntity<Object> registerNewCustomer(@Valid @RequestBody CustomerDto customerDto) {
-    log.info("Received a register-customer [{}]...", customerDto);
-
+  public ResponseEntity<Object> registerNewCustomer(@Valid @RequestBody CustomerRequestDto customerRequestDto) {
+    log.info("Received a register-customer [{}]...", customerRequestDto);
+    String responseBody = "";
     try {
-      Customer savedCustomer = customerService.registerCustomer(customerDto);
+      Customer savedCustomer = customerService.registerCustomer(customerRequestDto);
 
       if (savedCustomer == null) {
-        log.error("couldn't register new customer {}", customerDto);
-        return new ResponseEntity<>(
-            ResponseUtil.createErrorResponse("couldn't register new customer!",null),
-            HttpStatus.EXPECTATION_FAILED);
+        log.error("couldn't register new customer {}", customerRequestDto);
+        throw new CustomerServiceException(NEW_CUSTOMER_ERROR_MESSAGE);
       }
-      return new ResponseEntity<>(
-          ResponseUtil.createSuccessResponse("customer create successfully.",savedCustomer.toString()),
-          HttpStatus.OK);
+      String customerIdStr = "{\"customerId\":\"" + savedCustomer.getCustomerId() +"\"";
+      responseBody = ResponseUtil.createSuccessResponse("",customerIdStr);
+      return new ResponseEntity<>(responseBody, HttpStatus.OK);
+
+    } catch (CustomerServiceException e) {
+      log.error("Error processing incoming register-customer request {}, exception message:{}",
+          customerRequestDto, e);
+      responseBody = ResponseUtil.createErrorResponse(NEW_CUSTOMER_ERROR_MESSAGE,"");
+      return new ResponseEntity<>(responseBody, HttpStatus.EXPECTATION_FAILED);
 
     } catch (Exception e) {
-      log.error("Error processing incoming register-customer request {}, exception message:{}",customerDto, e);
-      return new ResponseEntity<>(
-          ResponseUtil.createErrorResponse("couldn't register new customer!",null),
-          HttpStatus.EXPECTATION_FAILED);
+      log.error("Error processing incoming register-customer request {}, exception message:{}",
+          customerRequestDto, e);
+      return new ResponseEntity<>(INTERNAL_SERVER_ERROR_MESSAGE, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -129,7 +135,8 @@ public class CustomerController {
   @ApiOperation(value = "Processes incoming update-customer request")
   @PostMapping(value = "/update-customer",
                consumes = MediaType.APPLICATION_JSON_VALUE,
-               produces = MediaType.APPLICATION_JSON_VALUE)
+               produces = MediaType.APPLICATION_JSON_VALUE
+  )
   @ResponseBody
   public ResponseEntity<Object> updateCustomerInfo(@Valid @RequestBody CustomerUpdateDto customerDto) {
 
