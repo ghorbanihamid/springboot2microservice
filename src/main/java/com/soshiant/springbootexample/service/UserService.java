@@ -12,12 +12,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
  */
 public interface UserService {
 
-//  /**
-//   * @param username String
-//   * @return UserDetails
-//   */
-  UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
-
   /**
    * @param username String
    * @return UserInfo

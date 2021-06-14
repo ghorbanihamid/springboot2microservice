@@ -7,19 +7,17 @@ import com.soshiant.springbootexample.mapper.CustomerMapper;
 import com.soshiant.springbootexample.security.JwtTokenProvider;
 import com.soshiant.springbootexample.service.AuthenticationService;
 import com.soshiant.springbootexample.service.CustomerService;
-import com.soshiant.springbootexample.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
-import org.yaml.snakeyaml.introspector.PropertyUtils;
 
 @Slf4j
 @Service
@@ -32,7 +30,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   private CustomerService customerService;
 
   @Autowired
-  private UserService userService;
+  private UserDetailsService userDetailsService;
 
   @Autowired
   private JwtTokenProvider jwtTokenProvider;
@@ -89,7 +87,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
     String username = jwtTokenProvider.extractUsername(jwtToken);
     if (!StringUtils.isBlank(username)) {
-      UserDetails userDetails = userService.loadUserByUsername(username);
+      UserDetails userDetails = userDetailsService.loadUserByUsername(username);
       return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
     return null;

@@ -3,7 +3,6 @@ package com.soshiant.springbootexample.service.impl;
 import com.soshiant.springbootexample.dto.CustomerRequestDto;
 import com.soshiant.springbootexample.dto.CustomerUpdateDto;
 import com.soshiant.springbootexample.entity.Customer;
-import com.soshiant.springbootexample.entity.UserInfo;
 import com.soshiant.springbootexample.exception.CustomerServiceException;
 import com.soshiant.springbootexample.mapper.CustomerMapper;
 import com.soshiant.springbootexample.repository.CustomerRepository;

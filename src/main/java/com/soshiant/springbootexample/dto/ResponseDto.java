@@ -19,7 +19,7 @@ public class ResponseDto {
 
   private String error;
 
-  private Object data;
+  private String data;
 
   //@formatter:off
   public static final String RESPONSE_BODY =
@@ -31,16 +31,8 @@ public class ResponseDto {
 
   @Override
   public String toString(){
-    String dataStr = "\"\"";
-    try {
-      if (data != null) {
-        dataStr = new ObjectMapper().writeValueAsString(data);
-      }
-    }catch (Exception e){
-      log.error("ResponseDto failed to convert data to json: [{}]!",e.getMessage());
-    }
     return "{ "
-         +   MessageFormat.format( ResponseDto.RESPONSE_BODY, status, error, dataStr)
+         +   MessageFormat.format( ResponseDto.RESPONSE_BODY, status, error, data)
          + "}";
   }
 }

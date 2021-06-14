@@ -24,6 +24,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -35,6 +36,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Slf4j
 @Controller
 @Validated
+@RequestMapping("/customer")
 public class CustomerController {
 
   @Autowired
@@ -47,7 +49,7 @@ public class CustomerController {
    * @return nothing
    */
   @ApiOperation(value = "Processes incoming register customer")
-  @PostMapping(value = "/register-customer",
+  @PostMapping(value = "/register",
                consumes = MediaType.APPLICATION_JSON_VALUE,
                produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseBody
@@ -61,14 +63,15 @@ public class CustomerController {
         log.error("couldn't register new customer {}", customerRequestDto);
         throw new CustomerServiceException(NEW_CUSTOMER_ERROR_MESSAGE);
       }
-      String customerIdStr = "{\"customerId\":\"" + savedCustomer.getCustomerId() +"\"";
-      responseBody = ResponseUtil.createSuccessResponse("",customerIdStr);
+      responseBody = ResponseUtil.createSuccessResponse(savedCustomer);
       return new ResponseEntity<>(responseBody, HttpStatus.OK);
 
     } catch (CustomerServiceException e) {
       log.error("Error processing incoming register-customer request {}, exception message:{}",
           customerRequestDto, e);
-      responseBody = ResponseUtil.createErrorResponse(NEW_CUSTOMER_ERROR_MESSAGE,"");
+      responseBody = ResponseUtil.createErrorResponse(
+          NEW_CUSTOMER_ERROR_MESSAGE + " " + e.getMessage());
+
       return new ResponseEntity<>(responseBody, HttpStatus.EXPECTATION_FAILED);
 
     } catch (Exception e) {
@@ -109,8 +112,7 @@ public class CustomerController {
             HttpStatus.EXPECTATION_FAILED);
       }
       return new ResponseEntity<>(
-          ResponseUtil.createSuccessResponse("customer's email updated successfully.",
-              "{ CustomerId : " + customerId +
+          ResponseUtil.createSuccessResponse("{ CustomerId : " + customerId +
                     "emailAddress : " + emailAddress + "}"
               ),
           HttpStatus.OK);
@@ -133,7 +135,7 @@ public class CustomerController {
    * @return nothing
    */
   @ApiOperation(value = "Processes incoming update-customer request")
-  @PostMapping(value = "/update-customer",
+  @PostMapping(value = "/update",
                consumes = MediaType.APPLICATION_JSON_VALUE,
                produces = MediaType.APPLICATION_JSON_VALUE
   )
@@ -153,15 +155,14 @@ public class CustomerController {
       }
 
       return new ResponseEntity<>(
-          ResponseUtil.createSuccessResponse("customer info updated successfully.",
-              savedCustomer.toString()),
-          HttpStatus.OK);
+          ResponseUtil.createSuccessResponse(savedCustomer), HttpStatus.OK);
 
     } catch (Exception e) {
       log.error("Error processing incoming updateCustomerInfo {} , exception message {} ",customerDto, e);
       return new ResponseEntity<>(
-          ResponseUtil.createErrorResponse("couldn't update customer info!",
-              "params : " + customerDto),
+          ResponseUtil.createErrorResponse(
+              "couldn't update customer info :" + e.getMessage(),
+              customerDto),
           HttpStatus.EXPECTATION_FAILED);
     }
   }

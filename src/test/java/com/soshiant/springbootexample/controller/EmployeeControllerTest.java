@@ -5,7 +5,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.validateMockitoUsage;
@@ -15,12 +14,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.soshiant.springbootexample.dto.CustomerRequestDto;
-import com.soshiant.springbootexample.dto.CustomerUpdateDto;
-import com.soshiant.springbootexample.entity.Customer;
+import com.soshiant.springbootexample.dto.EmployeeRequestDto;
+import com.soshiant.springbootexample.entity.EmployeeAddress;
 import com.soshiant.springbootexample.filter.AuthenticationFilter;
 import com.soshiant.springbootexample.service.AuthenticationService;
-import com.soshiant.springbootexample.service.CustomerService;
+import com.soshiant.springbootexample.service.EmployeeService;
 import com.soshiant.springbootexample.util.ResponseUtil;
 import com.soshiant.springbootexample.util.TestUtil;
 import com.soshiant.springbootexample.util.ValidatorTestUtil;
@@ -53,14 +51,14 @@ import org.springframework.web.context.WebApplicationContext;
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
-//@WebMvcTest(CustomerControllerTest.class)
+//@WebMvcTest(EmployeeControllerTest.class)
 @AutoConfigureMockMvc
-class CustomerControllerTest {
+class EmployeeControllerTest {
 
-  public static final String REGISTER_CUSTOMER_URL = "/customer/register";
-  public static final String UPDATE_CUSTOMER_URL = "/customer/update";
+  public static final String REGISTER_EMPLOYEE_URL = "/employee/register";
+
   @MockBean
-  private CustomerService customerService;
+  private EmployeeService employeeService;
 
   @Autowired
   private AuthenticationFilter authenticationFilter;
@@ -77,7 +75,7 @@ class CustomerControllerTest {
   private static Validator validator;
 
   @InjectMocks
-  private CustomerController customerController;
+  private EmployeeController employeeController;
 
   /*
    *  JUnit 5 @BeforeAll annotation is replacement of @BeforeClass annotation in JUnit 4.
@@ -91,23 +89,20 @@ class CustomerControllerTest {
   @BeforeAll
   public static void setupValidatorInstance() throws Exception {
     MockServletContext servletContext =  new MockServletContext();
-    AuthenticationService authenticationServiceForValidator = mock(AuthenticationService.class);
-    CustomerService customerServiceForValidator = mock(CustomerService.class);
-    List<Customer> customerList = new ArrayList<>();
-    customerList.add(new Customer());
-    when(customerServiceForValidator.getCustomers(anyList())).thenReturn(customerList);
+    AuthenticationService authenticationService = mock(AuthenticationService.class);
+    EmployeeService employeeService = mock(EmployeeService.class);
     List<Object> servicesList = new ArrayList<>();
-    servicesList.add(customerServiceForValidator);
-    servicesList.add(authenticationServiceForValidator);
+    servicesList.add(employeeService);
+    servicesList.add(authenticationService);
     validator = ValidatorTestUtil.getCustomValidatorFactoryBean(servicesList,servletContext);
   }
 
   @BeforeEach
   void setUp() {
-    ReflectionTestUtils.setField(customerController,"customerService",customerService);
+    ReflectionTestUtils.setField(employeeController,"employeeService",employeeService);
 
     mockMvc = MockMvcBuilders
-        .standaloneSetup(customerController)
+        .standaloneSetup(employeeController)
         .addFilters(springSecurityFilterChain)
         .setValidator(validator)
         .setHandlerExceptionResolvers()
@@ -120,16 +115,16 @@ class CustomerControllerTest {
   }
 
   @Test
-  @DisplayName("Test register customer request is Success")
-  void testRegisterNewCustomerIsSuccess() throws Exception {
+  @DisplayName("Test register employee request is Success")
+  void testRegisterNewEmployeeIsSuccess() throws Exception {
 
-    Customer customer = TestUtil.buildCustomerObject();
-    when(customerService.registerCustomer(any(CustomerRequestDto.class))).thenReturn(customer);
+    EmployeeAddress employeeInfo = TestUtil.buildEmployeeAddressObject();
+    when(employeeService.registerEmployee(any(EmployeeRequestDto.class))).thenReturn(employeeInfo);
 
-    MvcResult result = mockMvc.perform(post(REGISTER_CUSTOMER_URL)
+    MvcResult result = mockMvc.perform(post(REGISTER_EMPLOYEE_URL)
         .contentType(MediaType.APPLICATION_JSON_VALUE)
         .characterEncoding("utf-8")
-        .content(TestUtil.buildCustomerDtoAsJson())
+        .content(TestUtil.buildEmployeeDtoAsJson())
       )
       .andDo(print())
       .andExpect(status().isOk())
@@ -139,19 +134,19 @@ class CustomerControllerTest {
     String content = result.getResponse().getContentAsString();
     assertThat(content, is(notNullValue()));
     assertThat(content, containsString(ResponseUtil.SUCCESS));
-    verify(customerService).registerCustomer(isA(CustomerRequestDto.class));
+    verify(employeeService).registerEmployee(isA(EmployeeRequestDto.class));
   }
 
   @Test
-  @DisplayName("Test register customer request failed")
-  void testRegisterNewCustomerIsFailed() throws Exception {
+  @DisplayName("Test register employee request failed")
+  void testRegisterNewEmployeeIsFailed() throws Exception {
 
-    when(customerService.registerCustomer(any(CustomerRequestDto.class))).thenReturn(null);
+    when(employeeService.registerEmployee(any(EmployeeRequestDto.class))).thenReturn(null);
 
-    MvcResult result = mockMvc.perform(post(REGISTER_CUSTOMER_URL)
+    MvcResult result = mockMvc.perform(post(REGISTER_EMPLOYEE_URL)
         .contentType(MediaType.APPLICATION_JSON_VALUE)
         .characterEncoding("utf-8")
-        .content(TestUtil.buildCustomerDtoAsJson())
+        .content(TestUtil.buildEmployeeDtoAsJson())
       )
       .andDo(print())
       .andExpect(status().isExpectationFailed())
@@ -161,52 +156,6 @@ class CustomerControllerTest {
     String content = result.getResponse().getContentAsString();
     assertThat(content, is(notNullValue()));
     assertThat(content, containsString(ResponseUtil.ERROR));
-    verify(customerService).registerCustomer(isA(CustomerRequestDto.class));
+    verify(employeeService).registerEmployee(isA(EmployeeRequestDto.class));
   }
-
-  @Test
-  @DisplayName("Test Update Customer Info request is Success")
-  void testUpdateCustomerInfoIsSuccess() throws Exception {
-
-    Customer customer = TestUtil.buildCustomerObject();
-    when(customerService.updateCustomerInfo(any(CustomerUpdateDto.class))).thenReturn(customer);
-
-    MvcResult result = mockMvc.perform(post(UPDATE_CUSTOMER_URL)
-        .contentType(MediaType.APPLICATION_JSON_VALUE)
-        .characterEncoding("utf-8")
-        .content(TestUtil.buildCustomerUpdateDtoAsJson())
-      )
-      .andDo(print())
-      .andExpect(status().isOk())
-      .andReturn();
-
-    assertThat(result, is(notNullValue()));
-    String content = result.getResponse().getContentAsString();
-    assertThat(content, is(notNullValue()));
-    assertThat(content, containsString(ResponseUtil.SUCCESS));
-    verify(customerService).updateCustomerInfo(isA(CustomerUpdateDto.class));
-  }
-
-  @Test
-  @DisplayName("Test Update Customer Info request failed")
-  void testUpdateCustomerInfoIsFailed() throws Exception {
-
-    when(customerService.updateCustomerInfo(any(CustomerUpdateDto.class))).thenReturn(null);
-
-    MvcResult result = mockMvc.perform(post(UPDATE_CUSTOMER_URL)
-        .contentType(MediaType.APPLICATION_JSON_VALUE)
-        .characterEncoding("utf-8")
-        .content(TestUtil.buildCustomerUpdateDtoAsJson())
-      )
-      .andDo(print())
-      .andExpect(status().isExpectationFailed())
-      .andReturn();
-
-    assertThat(result, is(notNullValue()));
-    String content = result.getResponse().getContentAsString();
-    assertThat(content, is(notNullValue()));
-    assertThat(content, containsString(ResponseUtil.ERROR));
-    verify(customerService).updateCustomerInfo(isA(CustomerUpdateDto.class));
-  }
-
 }

@@ -1,5 +1,6 @@
 package com.soshiant.springbootexample.validation.validator;
 
+import com.soshiant.springbootexample.entity.Customer;
 import com.soshiant.springbootexample.service.CustomerService;
 import com.soshiant.springbootexample.validation.CustomerIdValidation;
 import java.util.ArrayList;
@@ -40,7 +41,8 @@ public class CustomerIdValidator implements ConstraintValidator<CustomerIdValida
       }
       List<Long> customerIds = new ArrayList<>();
       customerIds.add(customerId);
-      return !customerService.getCustomers(customerIds).isEmpty();
+      List<Customer> customerList = customerService.getCustomers(customerIds);
+      return !customerList.isEmpty();
 
     } catch (Exception e) {
       log.error("Error occurred while validating CustomerId: {}", customerId, e);

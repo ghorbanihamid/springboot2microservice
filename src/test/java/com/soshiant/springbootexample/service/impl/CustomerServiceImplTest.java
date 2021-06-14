@@ -1,16 +1,15 @@
 package com.soshiant.springbootexample.service.impl;
 
-import static com.soshiant.springbootexample.util.AppTestConstants.*;
-import static org.hamcrest.number.OrderingComparison.greaterThanOrEqualTo;
+import static com.soshiant.springbootexample.util.AppTestConstants.CUSTOMER_ID;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.number.OrderingComparison.greaterThanOrEqualTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.isNotNull;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -33,9 +32,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.QueryTimeoutException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @ActiveProfiles("test")
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
@@ -47,8 +49,12 @@ class CustomerServiceImplTest {
   @InjectMocks
   private CustomerServiceImpl customerService;
 
+  @MockBean
+  private PasswordEncoder passwordEncoder;
+
   @BeforeEach
   void setUp() {
+    ReflectionTestUtils.setField(customerService,"passwordEncoder",passwordEncoder);
   }
 
   @AfterEach

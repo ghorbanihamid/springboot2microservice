@@ -129,7 +129,7 @@ public class AuthenticationController {
             HttpStatus.EXPECTATION_FAILED);
       }
       return new ResponseEntity<>(
-          ResponseUtil.createSuccessResponse("logout successfully.",username),
+          ResponseUtil.createSuccessResponse(username),
           HttpStatus.OK);
 
     } catch (Exception e) {

@@ -4,8 +4,9 @@ import com.soshiant.springbootexample.filter.AuthenticationFilter;
 import com.soshiant.springbootexample.handler.CustomAuthenticationFailureHandler;
 import com.soshiant.springbootexample.handler.CustomAuthenticationSuccessHandler;
 import com.soshiant.springbootexample.service.UserService;
-import javax.annotation.Resource;
+import com.soshiant.springbootexample.service.impl.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,8 +26,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-  @Autowired
-  private UserService userService;
+  @Value("${spring.security.enabled:true}")
+  private  boolean springSecurityEnabled;
 
   @Autowired
   private AuthenticationFilter authenticationFilter;
@@ -45,19 +46,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       "/swagger-ui/**",
       "/actuator/**",
       "/h2/**",
-      "/authenticate/**"
+      "/authenticate/**",
+      "/customer/register"
   };
 
+  @Bean
+  @Override
+  public UserDetailsService userDetailsService(){
+    return new UserDetailsServiceImpl();
+
+  }
   @Bean
   public PasswordEncoder passwordEncoder(){
     return new BCryptPasswordEncoder();
 //    return NoOpPasswordEncoder.getInstance();
   }
 
-    @Bean
+  @Bean
   public DaoAuthenticationProvider authProvider() {
     DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-    authProvider.setUserDetailsService((UserDetailsService)userService);
+    authProvider.setUserDetailsService(userDetailsService());
     authProvider.setPasswordEncoder(passwordEncoder());
     return authProvider;
   }
@@ -79,28 +87,42 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Override
   public void configure(HttpSecurity httpSecurity) throws Exception {
-    httpSecurity
-        .authorizeRequests()
-            .antMatchers(AUTH_WHITELIST).permitAll() // whitelist public endpoints
-            .and()
-        .authorizeRequests()
-            .anyRequest().authenticated() // require authentication for any endpoint that's not whitelisted
-            .and()
-        .formLogin()
+
+    if(springSecurityEnabled) {
+
+      httpSecurity
+          .authorizeRequests()
+          .antMatchers(AUTH_WHITELIST).permitAll() // whitelist public endpoints
+          .and()
+          .authorizeRequests()
+          .anyRequest()
+          .authenticated() // require authentication for any endpoint that's not whitelisted
+          .and()
+          .formLogin()
 //            .usernameParameter("username")
-            .failureHandler(authenticationFailureHandler())
-            .successHandler(authenticationSuccessHandler())
-            .loginPage("/login")
-            .permitAll()
-            .and()
-        .logout()
-            .permitAll()
-            .and()
-        .sessionManagement()
-        .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+          .failureHandler(authenticationFailureHandler())
+          .successHandler(authenticationSuccessHandler())
+          .loginPage("/login")
+          .permitAll()
+          .and()
+          .logout()
+          .logoutUrl("/logout")
+          .permitAll()
+          .and()
+          .sessionManagement()
+          .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+
+
+    }
+    else {
+      httpSecurity
+          .authorizeRequests()
+          .antMatchers("/**").permitAll();
+    }
     httpSecurity.csrf().disable();
     httpSecurity.headers().frameOptions().disable();
-
-    httpSecurity.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
+    httpSecurity
+        .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
   }
 }

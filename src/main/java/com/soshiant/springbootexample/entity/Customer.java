@@ -1,5 +1,11 @@
 package com.soshiant.springbootexample.entity;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.soshiant.springbootexample.util.LocalDateDeserializer;
+import com.soshiant.springbootexample.util.LocalDateSerializer;
+import com.soshiant.springbootexample.util.LocalDateTimeDeserializer;
+import com.soshiant.springbootexample.util.LocalDateTimeSerializer;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -46,12 +52,18 @@ public class Customer implements Serializable {
   @Column(name = "EMAIL_ADDRESS", nullable = false)
   private String emailAddress;
 
+  @JsonDeserialize(using = LocalDateDeserializer.class)
+  @JsonSerialize(using = LocalDateSerializer.class)
   @Column(name = "BIRTH_DATE", nullable = false)
   private LocalDate birthDate;
 
+  @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+  @JsonSerialize(using = LocalDateTimeSerializer.class)
   @Column(name = "CREATED_DATE", nullable = false, updatable = false)
   private LocalDateTime createdDate;
 
+  @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+  @JsonSerialize(using = LocalDateTimeSerializer.class)
   @Column(name = "MODIFIED_DATE",nullable = true, updatable = true)
   private LocalDateTime modifiedDate;
 
