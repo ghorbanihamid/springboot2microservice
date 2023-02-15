@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+
+import java.io.Serializable;
 import java.time.LocalDate;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -23,7 +25,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CustomerRequestDto {
+public class CustomerRequestDto implements Serializable {
 
   @JsonProperty("first-name")
   @Pattern(regexp = "^[A-Za-z ]*$", message="Invalid First Name!")
@@ -91,7 +93,7 @@ public class CustomerRequestDto {
   private String username;
 
   @JsonProperty("password")
-  @Pattern(regexp = "^[A-Za-z ]*$", message="Invalid password!")
+  @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$", message="Invalid password!")
   @NotBlank(message="password cannot be missing or empty!")
   @Size(min=2, message="password must not be less than 2 characters!")
   private String password;

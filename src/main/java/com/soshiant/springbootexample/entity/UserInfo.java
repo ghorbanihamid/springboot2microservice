@@ -1,26 +1,23 @@
 package com.soshiant.springbootexample.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import java.util.HashSet;
+import java.util.Set;
 
 /*
  * Modeling With a Shared Primary Key
  * We don't need @GeneratedValue annotation with this way
  */
-@Data
-@ToString
+
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -30,8 +27,9 @@ public class UserInfo implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "USER_ID", nullable = false, updatable = false)
-  private Long userId;
+// this prevents OneToOne or OneToMany mapping
+//  @Column(name = "USER_ID", nullable = false, updatable = false)
+  private Long id;
 
   @Column(name = "USER_NAME", nullable = false)
   private String username;
@@ -54,10 +52,20 @@ public class UserInfo implements Serializable {
   @Column(name = "CREATED_DATE", nullable = false, updatable = false)
   private LocalDateTime createdDate;
 
-  @Column(name = "MODIFIED_DATE",nullable = true, updatable = true)
+  @Column(name = "MODIFIED_DATE")
   private LocalDateTime modifiedDate;
 
   @Transient
   private String jwtToken;
+
+  @OneToOne(targetEntity= Customer.class,optional = false, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @JoinColumn(name = "CUSTOMER_ID", referencedColumnName = "id")
+  private Customer customer;
+
+  @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @JoinTable(name = "USER_ROLE",schema = "CST",
+             joinColumns = @JoinColumn(name = "USER_ID"),
+             inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
+  private Set<Role> roles = new HashSet<>();
 
 }

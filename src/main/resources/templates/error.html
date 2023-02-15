@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="ISO-8859-1">
+<title>ECO Emulator</title>
+	<link rel="stylesheet" th:href="@{/webjars/bootstrap/5.0.1/css/bootstrap.min.css} " />
+	<link rel="stylesheet" th:href="@{/css/emulators.css}"/>
+</head>
+<body>
+	<div class="container">
+		<div class="text-center">
+			<br/>
+			<br/>
+			<h1>Oops! Something went wrong!</h1>
+			<div class="alert alert-danger" th:text="${message}"></div>
+			<br/>
+			<br/>
+			<img class="img-fluid" src="../static/img/error.jpg" th:src="@{/img/error.jpg}" />
+		</div>
+	</div>
+</body>
+</html>

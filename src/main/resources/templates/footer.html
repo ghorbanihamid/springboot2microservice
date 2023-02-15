@@ -1,0 +1,10 @@
+<div th:fragment="emulator-footer.html" xmlns:th="http://www.thymeleaf.org" >
+  <div class="card footer">
+    <div class="card-body">
+				<span
+            th:text="|Application version: ${@environment.getProperty('application.version')}|">
+				</span>
+    </div>
+  </div>
+
+</div>

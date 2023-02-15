@@ -25,5 +25,5 @@ public interface AuthenticationService {
    */
   boolean logout(String username) throws Exception;
 
-  public UsernamePasswordAuthenticationToken getAuthenticationFromJWTToken(String jwtToken);
+  public UsernamePasswordAuthenticationToken authenticateJWTToken(String jwtToken);
 }

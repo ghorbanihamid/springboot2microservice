@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security5">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Login</title>
+
+  <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.0.1/css/bootstrap.min.css} " />
+  <link rel="stylesheet" th:href="@{/css/app.css}"/>
+
+  <script th:src="@{/webjars/bootstrap/5.0.1/js/bootstrap.min.js}"></script>
+  <script th:src="@{/webjars/popper.js/2.9.2/umd/popper.min.js}"></script>
+  <script th:src="@{/webjars/jquery/3.6.0/jquery.min.js}"></script>
+
+</head>
+<body>
+
+<div class="container card-body bg-white rounded shadow">
+  <div th:insert="~{header}"></div>
+  <span>kjhfksjdfksdfh </span>
+
+  <div sec:authorize="hasRole('USER')">Text visible to user.</div>
+  <div sec:authorize="hasRole('ADMIN')">Text visible to admin.</div>
+  <div sec:authorize="isAuthenticated()">Text visible only to authenticated users.</div>
+
+  <div th:text="${#authentication.name}">
+    The value of the "name" property of the authentication object should appear here.
+  </div>
+
+  <div th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+    This will only be displayed if authenticated user has role ROLE_ADMIN.
+  </div>
+
+  <div sec:authorize="hasAuthority('ROLE_ADMIN')" > Has Authority ADMIN </div>
+  <div sec:authorize="hasAuthority('ROLE_USER')" > Has Authority USER </div>
+  <div class="container" sec:authorize="isAuthenticated()">
+    <div sec:authorize="hasRole('ROLE_USER')" class="col-md-12 col-md-offset-6">
+      <div th:each="entry:${userMenuMap.entrySet()}" class="processorBox" >
+        <button class="processorBtn">
+          <a th:href="@{/{menuName}(menuName=${entry.value})}" th:text="${entry.key}"></a>
+        </button>
+      </div>
+    </div>
+    <div sec:authorize="hasRole('ROLE_ADMIN')" class="col-md-12 col-md-offset-6">
+      <div th:each="entry:${adminMenuMap.entrySet()}" class="processorBox" >
+        <button class="processorBtn">
+          <a th:href="@{/{menuName}(menuName=${entry.value})}" th:text="${entry.key}"></a>
+        </button>
+      </div>
+    </div>
+    <div class="col-md-12 col-md-offset-6">
+      <div class="processorBox" >
+        <button class="processorBtn">
+          <a th:href="@{/logout}" th:text="logout"></a>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div th:insert="~{footer}"></div>
+
+</div>
+</body>
+</html>

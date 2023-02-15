@@ -1,6 +1,6 @@
 
 
-# Spring Boot 2 Microservice Example
+# Spring Boot 2.7 Microservice Example
 
 
 a description text here
@@ -25,12 +25,13 @@ mvn clean package
 ### Run in your IDE:
 
 ```
-run the application with dev profile
+run the application with dev profile, add below line to VM Options:
+-Ddebug -Dspring.profiles.active=dev -Dmaven.test.skip=true -Dspring.devtools.restart.enabled=true
 ```
-### Run in commnd line:
+### Run in command line:
 
 ```
-java -jar -Dspring.profiles.active=dev target/emp.jar
+java -jar -Dspring.profiles.active=dev target/spring-boot-example.jar
 ```
 
 ### Run with docker:
@@ -48,10 +49,15 @@ docker-compose up
 ## Application health check:
 
 #### Global status: 
-- http://localhost:8500/eco/emp/actuator/health
+- http://localhost:8500/soshiant/sbe/actuator/health
 
 #### Liveness: 
-- http://localhost:8500/eco/emp/actuator/health/liveness
+- http://localhost:8500/soshiant/sbe/actuator/health/liveness
 
 ####  Readiness:
-- http://localhost:8500/eco/emp/actuator/health/readiness
+- http://localhost:8500/soshiant/sbe/actuator/health/readiness
+
+#  H2 Console:
+- http://localhost:8500/soshiant/sbe/h2/
+- in JDBC URL type:  
+    ## jdbc:h2:mem:sbedb; 

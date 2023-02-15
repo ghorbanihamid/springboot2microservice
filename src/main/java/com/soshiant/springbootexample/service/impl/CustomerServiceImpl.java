@@ -105,7 +105,7 @@ public class CustomerServiceImpl implements CustomerService {
         customerOptional.ifPresent(customerList::add);
       }
       else {
-        customerList = customerRepository.findByCustomerIdIn(customerIds);
+        customerList = customerRepository.findByIdIn(customerIds);
       }
 
       return customerList;
@@ -154,8 +154,9 @@ public class CustomerServiceImpl implements CustomerService {
   public Customer getCustomerByUsername(String username) throws CustomerServiceException {
 
     try {
-      Optional<Customer> customerOptional = customerRepository.findByUserInfo_Username(username);
-      return (customerOptional.orElse(null));
+//      Optional<Customer> customerOptional = customerRepository.findByUserInfo_Username(username);
+//      return (customerOptional.orElse(null));
+      return null;
 
     } catch (Exception e){
       log.error(

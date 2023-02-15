@@ -3,12 +3,12 @@ package com.soshiant.springbootexample.repository;
 import static com.soshiant.springbootexample.util.AppTestConstants.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.validateMockitoUsage;
 
-import com.soshiant.springbootexample.entity.Customer;
 import com.soshiant.springbootexample.entity.Employee;
-import com.soshiant.springbootexample.util.TestUtil;
+import com.soshiant.springbootexample.util.DataUtils;
+import com.soshiant.springbootexample.util.LocalDateSerializer;
+
 import java.util.Optional;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.AfterEach;
@@ -37,7 +37,7 @@ class EmployeeRepositoryTest {
 
   @BeforeEach
   void setUp() {
-    employee = TestUtil.buildEmployeeObject();
+    employee = DataUtils.buildEmployeeObject();
     // for persisting a new Employee (testEntityManager.persist), Id must be null
     employee.setEmployeeId(null);
   }

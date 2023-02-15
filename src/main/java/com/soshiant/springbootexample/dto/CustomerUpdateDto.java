@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.soshiant.springbootexample.validation.CustomerIdValidation;
+
+import java.io.Serializable;
 import java.time.LocalDate;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Email;
@@ -25,7 +27,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CustomerUpdateDto {
+public class CustomerUpdateDto implements Serializable {
 
   @JsonProperty("customer-id")
   @CustomerIdValidation

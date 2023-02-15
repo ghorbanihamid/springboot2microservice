@@ -19,8 +19,9 @@ import com.soshiant.springbootexample.entity.EmployeeAddress;
 import com.soshiant.springbootexample.filter.AuthenticationFilter;
 import com.soshiant.springbootexample.service.AuthenticationService;
 import com.soshiant.springbootexample.service.EmployeeService;
+import com.soshiant.springbootexample.util.DataUtils;
+import com.soshiant.springbootexample.util.LocalDateSerializer;
 import com.soshiant.springbootexample.util.ResponseUtil;
-import com.soshiant.springbootexample.util.TestUtil;
 import com.soshiant.springbootexample.util.ValidatorTestUtil;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +34,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -118,13 +118,13 @@ class EmployeeControllerTest {
   @DisplayName("Test register employee request is Success")
   void testRegisterNewEmployeeIsSuccess() throws Exception {
 
-    EmployeeAddress employeeInfo = TestUtil.buildEmployeeAddressObject();
+    EmployeeAddress employeeInfo = DataUtils.buildEmployeeAddressObject();
     when(employeeService.registerEmployee(any(EmployeeRequestDto.class))).thenReturn(employeeInfo);
 
     MvcResult result = mockMvc.perform(post(REGISTER_EMPLOYEE_URL)
         .contentType(MediaType.APPLICATION_JSON_VALUE)
         .characterEncoding("utf-8")
-        .content(TestUtil.buildEmployeeDtoAsJson())
+        .content(DataUtils.buildEmployeeDtoAsJson())
       )
       .andDo(print())
       .andExpect(status().isOk())
@@ -146,7 +146,7 @@ class EmployeeControllerTest {
     MvcResult result = mockMvc.perform(post(REGISTER_EMPLOYEE_URL)
         .contentType(MediaType.APPLICATION_JSON_VALUE)
         .characterEncoding("utf-8")
-        .content(TestUtil.buildEmployeeDtoAsJson())
+        .content(DataUtils.buildEmployeeDtoAsJson())
       )
       .andDo(print())
       .andExpect(status().isExpectationFailed())

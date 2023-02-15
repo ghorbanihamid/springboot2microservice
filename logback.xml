@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<property name="LOG_PATH" value="${APPLICATION_LOG_PATH}" />
+
+	<appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<pattern>%green(%d{ISO8601}) %highlight(%-5level) %yellow(%C{1.}): %highlight(%msg%n%throwable)</pattern>
+		</layout >
+	</appender>
+  
+	<!-- Basic FileAppender. Applications should rely on log rotate to do the file rotation. -->
+	<appender name="RollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_PATH}/emulator.log</file>
+		<append>true</append>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%green(%d{ISO8601}) %highlight(%-5level) %yellow(%C{1.}): %highlight(%msg%n%throwable)</pattern>
+		</encoder>
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- rollover daily and when the file reaches 10 MegaBytes -->
+			<fileNamePattern>${LOG_PATH}/emulator-%d{yyyy-MM-dd}.%i.log
+			</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>10MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+	</appender>
+
+	<!-- LOG everything, default level is : INFO -->
+    <root level="${APPLICATION_LOG_LEVEL:-INFO}">
+      <appender-ref ref="Console" />
+      <appender-ref ref="RollingFile" />
+    </root>
+
+	<!-- LOG "ca.firefly.eco.emulator*" at default 'DEBUG' level -->
+	<logger name="ca.firefly.eco.emulator" level="${APPLICATION_LOG_LEVEL:-DEBUG}" additivity="false">
+		<appender-ref ref="Console" />
+		<appender-ref ref="RollingFile" />
+	</logger>
+
+</configuration>

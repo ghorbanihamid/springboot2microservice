@@ -21,8 +21,9 @@ import com.soshiant.springbootexample.entity.Customer;
 import com.soshiant.springbootexample.filter.AuthenticationFilter;
 import com.soshiant.springbootexample.service.AuthenticationService;
 import com.soshiant.springbootexample.service.CustomerService;
+import com.soshiant.springbootexample.util.DataUtils;
+import com.soshiant.springbootexample.util.LocalDateSerializer;
 import com.soshiant.springbootexample.util.ResponseUtil;
-import com.soshiant.springbootexample.util.TestUtil;
 import com.soshiant.springbootexample.util.ValidatorTestUtil;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +36,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -123,13 +123,13 @@ class CustomerControllerTest {
   @DisplayName("Test register customer request is Success")
   void testRegisterNewCustomerIsSuccess() throws Exception {
 
-    Customer customer = TestUtil.buildCustomerObject();
+    Customer customer = DataUtils.buildCustomerObject();
     when(customerService.registerCustomer(any(CustomerRequestDto.class))).thenReturn(customer);
 
     MvcResult result = mockMvc.perform(post(REGISTER_CUSTOMER_URL)
         .contentType(MediaType.APPLICATION_JSON_VALUE)
         .characterEncoding("utf-8")
-        .content(TestUtil.buildCustomerDtoAsJson())
+        .content(DataUtils.buildCustomerDtoAsJson())
       )
       .andDo(print())
       .andExpect(status().isOk())
@@ -151,7 +151,7 @@ class CustomerControllerTest {
     MvcResult result = mockMvc.perform(post(REGISTER_CUSTOMER_URL)
         .contentType(MediaType.APPLICATION_JSON_VALUE)
         .characterEncoding("utf-8")
-        .content(TestUtil.buildCustomerDtoAsJson())
+        .content(DataUtils.buildCustomerDtoAsJson())
       )
       .andDo(print())
       .andExpect(status().isExpectationFailed())
@@ -168,13 +168,13 @@ class CustomerControllerTest {
   @DisplayName("Test Update Customer Info request is Success")
   void testUpdateCustomerInfoIsSuccess() throws Exception {
 
-    Customer customer = TestUtil.buildCustomerObject();
+    Customer customer = DataUtils.buildCustomerObject();
     when(customerService.updateCustomerInfo(any(CustomerUpdateDto.class))).thenReturn(customer);
 
     MvcResult result = mockMvc.perform(post(UPDATE_CUSTOMER_URL)
         .contentType(MediaType.APPLICATION_JSON_VALUE)
         .characterEncoding("utf-8")
-        .content(TestUtil.buildCustomerUpdateDtoAsJson())
+        .content(DataUtils.buildCustomerUpdateDtoAsJson())
       )
       .andDo(print())
       .andExpect(status().isOk())
@@ -196,7 +196,7 @@ class CustomerControllerTest {
     MvcResult result = mockMvc.perform(post(UPDATE_CUSTOMER_URL)
         .contentType(MediaType.APPLICATION_JSON_VALUE)
         .characterEncoding("utf-8")
-        .content(TestUtil.buildCustomerUpdateDtoAsJson())
+        .content(DataUtils.buildCustomerUpdateDtoAsJson())
       )
       .andDo(print())
       .andExpect(status().isExpectationFailed())

@@ -3,6 +3,7 @@ package com.soshiant.springbootexample.mapper;
 import com.soshiant.springbootexample.dto.CustomerRequestDto;
 import com.soshiant.springbootexample.dto.CustomerUpdateDto;
 import com.soshiant.springbootexample.dto.LoginResponseDto;
+import com.soshiant.springbootexample.dto.SignupDto;
 import com.soshiant.springbootexample.entity.Customer;
 import com.soshiant.springbootexample.entity.CustomerAddress;
 import com.soshiant.springbootexample.entity.UserInfo;
@@ -27,10 +28,20 @@ import org.mapstruct.ReportingPolicy;
 public abstract class CustomerMapper {
 
   @Mapping( target = "createdDate", expression  = "java(getCurrentDateTime())")
-  @Mapping( target = "userInfo.createdDate", expression  = "java(getCurrentDateTime())")
+//  @Mapping( target = "userInfo.createdDate", expression  = "java(getCurrentDateTime())")
+  @Mapping( source = "firstName",           target = "firstName")
+  @Mapping( source = "lastName",            target = "lastName")
+  @Mapping( source = "phoneNumber",         target = "phoneNumber")
+  @Mapping( source = "emailAddress",        target = "emailAddress")
+//  @Mapping( source = "username",            target = "userInfo.username")
+//  @Mapping( source = "password",            target = "userInfo.password")
+  public abstract Customer toCustomer(SignupDto dto);
+
+  @Mapping( target = "createdDate", expression  = "java(getCurrentDateTime())")
+//  @Mapping( target = "userInfo.createdDate", expression  = "java(getCurrentDateTime())")
   @Mapping( source = "dto",      target = "addresses")
-  @Mapping( source = "username", target = "userInfo.username")
-  @Mapping( source = "password", target = "userInfo.password")
+//  @Mapping( source = "username", target = "userInfo.username")
+//  @Mapping( source = "password", target = "userInfo.password")
   public abstract Customer toCustomer(CustomerRequestDto dto);
 
   @Mapping( source = "streetNumber", target = "streetNumber")
@@ -69,7 +80,7 @@ public abstract class CustomerMapper {
   public abstract void toCustomerForUpdate(CustomerUpdateDto customerDto, @MappingTarget Customer customer);
 
 
-  @Mapping( source = "userInfo.username",   target = "username")
+//  @Mapping( source = "userInfo.username",   target = "username")
   @Mapping( source = "firstName",           target = "firstName")
   @Mapping( source = "lastName",            target = "lastName")
   @Mapping( source = "phoneNumber",         target = "phoneNumber")

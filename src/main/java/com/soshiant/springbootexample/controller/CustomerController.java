@@ -1,32 +1,32 @@
 package com.soshiant.springbootexample.controller;
 
-import static com.soshiant.springbootexample.util.AppConstants.INTERNAL_SERVER_ERROR_MESSAGE;
-import static com.soshiant.springbootexample.util.AppConstants.NEW_CUSTOMER_ERROR_MESSAGE;
-
 import com.soshiant.springbootexample.dto.CustomerRequestDto;
 import com.soshiant.springbootexample.dto.CustomerUpdateDto;
+import com.soshiant.springbootexample.dto.SignupDto;
 import com.soshiant.springbootexample.entity.Customer;
 import com.soshiant.springbootexample.exception.CustomerServiceException;
 import com.soshiant.springbootexample.service.CustomerService;
+import com.soshiant.springbootexample.util.JacksonUtils;
 import com.soshiant.springbootexample.util.ResponseUtil;
 import com.soshiant.springbootexample.validation.CustomerIdValidation;
-import io.swagger.annotations.ApiOperation;
 import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
+
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+
+import static com.soshiant.springbootexample.util.AppConstants.*;
+import static com.soshiant.springbootexample.util.AppConstants.ERROR_HTML;
 
 /**
  *
@@ -42,13 +42,40 @@ public class CustomerController {
   @Autowired
   private CustomerService customerService;
 
+  @RequestMapping(value = {"/register-page"}, method = RequestMethod.GET)
+  public String showRegisterNewCustomerPage(Model model){
+    model.addAttribute("customerRequestDto", new CustomerRequestDto());
+    return "customer-register";
+  }
+
+  /**
+   * processes a customer register request
+   *
+   * @param customerRequestDto CustomerRequestDto
+   * @return success
+   */
+  @Operation(summary = "Processes incoming customer register request")
+  @PostMapping( value = "/register",
+          consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+          produces = MediaType.APPLICATION_JSON_VALUE
+  )
+  public String registerNewCustomer(@Valid @ModelAttribute("customerRequestDto") CustomerRequestDto customerRequestDto, Model model) {
+    log.info("Received a customer register request for user : [{}]", customerRequestDto);
+    ResponseEntity<Object> response = registerNewCustomer(customerRequestDto);
+    if (response.getStatusCode() == HttpStatus.OK) {
+      return SUCCESS_HTML;
+    } else {
+      return ERROR_HTML;
+    }
+  }
+
   /**
    * processes a received <b>register-customer</b> request
    *
    * @param customerRequestDto customer info
    * @return nothing
    */
-  @ApiOperation(value = "Processes incoming register customer")
+  @Operation(summary  = "Processes incoming register customer")
   @PostMapping(value = "/register",
                consumes = MediaType.APPLICATION_JSON_VALUE,
                produces = MediaType.APPLICATION_JSON_VALUE)
@@ -88,7 +115,8 @@ public class CustomerController {
    * @param emailAddress email address
    * @return ResponseEntity
    */
-  @ApiOperation(value = "updating customer's email address")
+  @Operation(summary  = "updating customer's email address")
+  @PreAuthorize("hasRole('ROLE_USER')")
   @PostMapping(value = "/update-email",
                produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseBody
@@ -134,7 +162,8 @@ public class CustomerController {
    * @param customerDto customer info
    * @return nothing
    */
-  @ApiOperation(value = "Processes incoming update-customer request")
+  @Operation(summary = "Processes incoming update-customer request")
+  @PreAuthorize("hasRole('ROLE_USER')")
   @PostMapping(value = "/update",
                consumes = MediaType.APPLICATION_JSON_VALUE,
                produces = MediaType.APPLICATION_JSON_VALUE
@@ -173,7 +202,7 @@ public class CustomerController {
    * @param customerIds customer Ids
    * @return List of customers
    */
-  @ApiOperation(value = "Processes customer-ids and returns customer-list")
+  @Operation(summary = "Processes customer-ids and returns customer-list")
   @GetMapping(value = "/customer-info",
               params ={"customer-ids"},
               produces = MediaType.APPLICATION_JSON_VALUE)
@@ -190,7 +219,7 @@ public class CustomerController {
         log.error("couldn't get customer with Ids {}", customerIds);
         return new ResponseEntity<>("{\"error\": \"customers not found\"}", HttpStatus.NOT_FOUND);
       }
-      String response = ResponseUtil.getJsonString(customerList);
+      String response = JacksonUtils.toJson(customerList);
 
       return new ResponseEntity<>(response, HttpStatus.OK);
     } catch (Exception e) {
@@ -203,7 +232,7 @@ public class CustomerController {
    *
    * @return All customers list
    */
-  @ApiOperation(value = "returns all customers list")
+  @Operation(summary = "returns all customers list")
   @GetMapping(value = "/customer-info", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseBody
   public ResponseEntity<Object> getAllCustomers() {
@@ -217,7 +246,7 @@ public class CustomerController {
         log.error("empty table");
         return new ResponseEntity<>("{\"error\": \"customers not found\"}", HttpStatus.NOT_FOUND);
       }
-      String response = ResponseUtil.getJsonString(customerList);
+      String response = JacksonUtils.toJson(customerList);
       return new ResponseEntity<>(response, HttpStatus.OK);
 
     } catch (Exception e) {
@@ -233,7 +262,7 @@ public class CustomerController {
    * @param lastName last-name
    * @return customer-info
    */
-  @ApiOperation(value = "Processes customer-name and returns customer-info")
+  @Operation(summary = "Processes customer-name and returns customer-info")
   @GetMapping(value = "/customer-info",
               params ={"first-name","last-name"},
               produces = MediaType.APPLICATION_JSON_VALUE)

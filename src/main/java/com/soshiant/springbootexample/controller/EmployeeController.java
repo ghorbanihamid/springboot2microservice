@@ -3,14 +3,17 @@ package com.soshiant.springbootexample.controller;
 import com.soshiant.springbootexample.dto.EmployeeRequestDto;
 import com.soshiant.springbootexample.entity.EmployeeAddress;
 import com.soshiant.springbootexample.service.EmployeeService;
+import com.soshiant.springbootexample.util.JacksonUtils;
 import com.soshiant.springbootexample.util.ResponseUtil;
-import io.swagger.annotations.ApiOperation;
 import javax.validation.Valid;
+
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,7 +42,8 @@ public class EmployeeController {
    * @param employeeRequestDto employee info
    * @return ResponseEntity
    */
-  @ApiOperation(value = "Processes incoming register employee")
+  @Operation(summary  = "Processes incoming register employee")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
   @PostMapping(value = "/register",
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
@@ -75,7 +79,8 @@ public class EmployeeController {
    * @param employeeId employee Id
    * @return nothing
    */
-  @ApiOperation(value = "Processes incoming get employee request")
+  @Operation(summary  = "Processes incoming get employee request")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
   @GetMapping(value = "/info",
       params ={"employee-id"},
       produces = MediaType.APPLICATION_JSON_VALUE)
@@ -92,7 +97,7 @@ public class EmployeeController {
         log.error("couldn't get employee with Id {}", employeeId);
         return new ResponseEntity<>("{\"error\": \"employee not found\"}", HttpStatus.NOT_FOUND);
       }
-      String response = ResponseUtil.getJsonString(employeeInfo);
+      String response = JacksonUtils.toJson(employeeInfo);
 
       return new ResponseEntity<>(response, HttpStatus.OK);
 

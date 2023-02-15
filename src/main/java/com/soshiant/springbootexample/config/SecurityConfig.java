@@ -1,78 +1,87 @@
 package com.soshiant.springbootexample.config;
 
-import com.soshiant.springbootexample.filter.AuthenticationFilter;
 import com.soshiant.springbootexample.handler.CustomAuthenticationFailureHandler;
 import com.soshiant.springbootexample.handler.CustomAuthenticationSuccessHandler;
-import com.soshiant.springbootexample.service.UserService;
-import com.soshiant.springbootexample.service.impl.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
 
 @EnableWebSecurity
 @Configuration
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig {
 
-  @Value("${spring.security.enabled:true}")
+  @Value("${spring.security.enabled:false}")
   private  boolean springSecurityEnabled;
 
-  @Autowired
-  private AuthenticationFilter authenticationFilter;
+  @Value("${server.servlet.context-path}")
+  private  String appContextPath;
 
-  private static final String[] AUTH_WHITELIST = {
-      // -- Swagger UI v2
-      "/v2/api-docs",
-      "/swagger-resources",
-      "/swagger-resources/**",
-      "/configuration/ui",
-      "/configuration/security",
-      "/swagger-ui.html",
-      "/webjars/**",
-      // -- Swagger UI v3 (OpenAPI)
-      "/v3/api-docs/**",
-      "/swagger-ui/**",
-      "/actuator/**",
-      "/h2/**",
-      "/authenticate/**",
-      "/customer/register"
+  private final String[] AUTH_WHITELIST = {
+          "/css/**",
+          "/img/**",
+          "/js/**",
+          "/webjars/**",
+          "/actuator/**",
+          "/h2/**",
+          "h2/stylesheet.css",
+          "/h2/login.do/**",
+          "/h2/background.gif/**",
+          "/login/**",
+          "/authenticate/**",
+          "/signup-page",
+          "/signup",
+
+          // -- Swagger UI v2
+          "/v2/api-docs",
+          "/swagger-resources",
+          "/swagger-resources/**",
+          "/configuration/ui",
+          "/configuration/security",
+          "/swagger-ui.html",
+          "/webjars/**",
+
+          // -- Swagger UI v3 (OpenAPI)
+          "/v3/api-docs/**",
+          "/swagger-ui/**"
   };
 
-  @Bean
-  @Override
-  public UserDetailsService userDetailsService(){
-    return new UserDetailsServiceImpl();
+  @Autowired
+  private UserDetailsService UserDetailsService;
 
-  }
-  @Bean
-  public PasswordEncoder passwordEncoder(){
-    return new BCryptPasswordEncoder();
-//    return NoOpPasswordEncoder.getInstance();
-  }
+  @Autowired
+  private BCryptPasswordEncoder passwordEncoder;
+
+  @Autowired
+  private AccessDeniedHandler accessDeniedHandler;
 
   @Bean
-  public DaoAuthenticationProvider authProvider() {
+  public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    return authenticationConfiguration.getAuthenticationManager();
+  }
+
+  @Bean
+  public DaoAuthenticationProvider authenticationProvider() {
     DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-    authProvider.setUserDetailsService(userDetailsService());
-    authProvider.setPasswordEncoder(passwordEncoder());
-    return authProvider;
-  }
+    authProvider.setUserDetailsService(UserDetailsService);
+    authProvider.setPasswordEncoder(passwordEncoder);
 
-  @Bean
-  public AuthenticationManager customAuthenticationManager() throws Exception {
-    return authenticationManager();
+    return authProvider;
   }
 
   @Bean
@@ -85,44 +94,66 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     return new CustomAuthenticationSuccessHandler();
   }
 
-  @Override
-  public void configure(HttpSecurity httpSecurity) throws Exception {
+
+  @Bean
+  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
     if(springSecurityEnabled) {
+        http.authenticationProvider(authenticationProvider());
 
-      httpSecurity
-          .authorizeRequests()
-          .antMatchers(AUTH_WHITELIST).permitAll() // whitelist public endpoints
-          .and()
-          .authorizeRequests()
-          .anyRequest()
-          .authenticated() // require authentication for any endpoint that's not whitelisted
-          .and()
-          .formLogin()
-//            .usernameParameter("username")
-          .failureHandler(authenticationFailureHandler())
-          .successHandler(authenticationSuccessHandler())
-          .loginPage("/login")
-          .permitAll()
-          .and()
-          .logout()
-          .logoutUrl("/logout")
-          .permitAll()
-          .and()
-          .sessionManagement()
-          .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.headers().frameOptions().sameOrigin();
+        HttpSecurity h2Console = http.antMatcher("/h2/**");
+        h2Console.csrf().disable();
+        h2Console.httpBasic();
+        h2Console.headers().frameOptions().sameOrigin();
 
-
+        http.authorizeRequests()
+            // URL matching for accessibility
+            .antMatchers(AUTH_WHITELIST).permitAll()
+            .antMatchers("/h2/**").permitAll()
+//            .antMatchers("/soshiant/sbe/employee/**").hasAuthority("ADMIN")
+//            .antMatchers("/soshiant/sbe/customer/**").hasAuthority("USER")
+//            .antMatchers("/soshiant/sbe/signup-page/").hasAuthority("USER")
+//            .antMatchers("/soshiant/sbe/dashboard/").hasAnyAuthority("USER")
+//            .antMatchers("/soshiant/sbe/logout/").hasAnyAuthority("USER","ADMIN")
+//            .antMatchers(HttpMethod.DELETE).hasAuthority("ADMIN")
+            .anyRequest().authenticated()
+            .and()
+            // form login
+            .csrf().disable().formLogin()
+            .loginPage("/login").permitAll()
+            .usernameParameter("username")
+            .passwordParameter("password")
+            .successHandler(authenticationSuccessHandler())
+            .defaultSuccessUrl("/dashboard", true)
+            .failureHandler(authenticationFailureHandler())
+            .failureUrl("/login?error=true")
+            .and()
+            // logout
+            .logout()
+            .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+            .logoutSuccessUrl("/login").permitAll()
+            .and()
+            .exceptionHandling().accessDeniedHandler(accessDeniedHandler)
+            .accessDeniedPage("/login")
+            .and()
+            .sessionManagement()
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
     }
     else {
-      httpSecurity
-          .authorizeRequests()
-          .antMatchers("/**").permitAll();
+        http.authorizeRequests().anyRequest().permitAll();
     }
-    httpSecurity.csrf().disable();
-    httpSecurity.headers().frameOptions().disable();
-    httpSecurity
-        .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
+    return http.build();
+  }
+
+  @Bean
+  public WebSecurityCustomizer webSecurityCustomizer() {
+    if(springSecurityEnabled) {
+      return (web) -> web.ignoring().antMatchers(AUTH_WHITELIST);
+    } else {
+      return (web) -> web.ignoring().antMatchers("/**");
+    }
+
   }
 }

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Login</title>
+
+  <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.0.1/css/bootstrap.min.css} " />
+  <link rel="stylesheet" th:href="@{/css/app.css}"/>
+
+  <script th:src="@{/webjars/bootstrap/5.0.1/js/bootstrap.min.js}"></script>
+  <script th:src="@{/webjars/popper.js/2.9.2/umd/popper.min.js}"></script>
+  <script th:src="@{/webjars/jquery/3.6.0/jquery.min.js}"></script>
+
+</head>
+<body>
+
+<!-- Section: Design Block -->
+<section class="text-center">
+  <!-- Background image -->
+  <div class="p-5 bg-image" style="
+        background-image: url('https://mdbootstrap.com/img/new/textures/full/171.jpg');
+        height: 300px;
+        "></div>
+  <!-- Background image -->
+
+  <div class="card mx-4 mx-md-5 shadow-5-strong" style="
+        margin-top: -100px;
+        background: hsla(0, 0%, 100%, 0.8);
+        backdrop-filter: blur(30px);
+        ">
+    <div class="card-body py-5 px-md-5">
+
+      <div class="row d-flex justify-content-center">
+        <div class="col-lg-8">
+          <h2 class="fw-bold mb-5">Customer Registration</h2>
+          <form th:action="@{/customer/register}" th:object="${customerRequestDto}" method="POST">
+            <!-- 2 column grid layout with text inputs for the first and last names -->
+            <div class="row">
+              <div class="col-md-6 mb-4">
+                <div class="form-outline" >
+                  <input type="text" id="firstName" th:field="*{firstName}" placeholder="First Name" required autofocus class="form-control form-control-lg">
+                </div>
+              </div>
+              <div class="col-md-6 mb-4">
+                <div class="form-outline" >
+                  <input type="text" id="lastName" th:field="*{lastName}" placeholder="Last Name" required autofocus class="form-control form-control-lg">
+                </div>
+              </div>
+            </div>
+
+            <!-- Email input -->
+            <div class="form-outline mb-4" >
+              <input type="text" id="emailAddress" th:field="*{emailAddress}" placeholder="Email Address" required autofocus class="form-control form-control-lg">
+            </div>
+
+            <!-- phone number -->
+            <div class="form-outline mb-4" >
+              <input type="text" id="phoneNumber" th:field="*{phoneNumber}" placeholder="Phone Number" required autofocus class="form-control form-control-lg">
+            </div>
+
+            <!-- birth date -->
+            <div class="form-outline mb-4" >
+              <input type="text" id="birthDate" th:field="*{birthDate}" placeholder="Birth Date" required autofocus class="form-control form-control-lg">
+            </div>
+
+            <!-- username -->
+            <div class="form-outline mb-4" >
+              <input type="text" id="username" th:field="*{username}" placeholder="Username" required autofocus class="form-control form-control-lg">
+            </div>
+
+            <!-- Password input -->
+            <div class="form-outline mb-4" >
+              <input type="password" id="password" th:field="*{password}" placeholder="Password" required autofocus class="form-control form-control-lg">
+            </div>
+
+            <!-- Submit button -->
+            <button type="submit" class="btn btn-primary btn-block mb-4">
+              Register
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Section: Design Block -->
+
+</body>
+</html>

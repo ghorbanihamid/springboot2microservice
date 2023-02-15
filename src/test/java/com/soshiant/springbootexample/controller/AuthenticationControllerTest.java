@@ -19,7 +19,8 @@ import com.soshiant.springbootexample.filter.AuthenticationFilter;
 import com.soshiant.springbootexample.repository.UserRepository;
 import com.soshiant.springbootexample.service.AuthenticationService;
 import com.soshiant.springbootexample.service.UserService;
-import com.soshiant.springbootexample.util.TestUtil;
+import com.soshiant.springbootexample.util.DataUtils;
+import com.soshiant.springbootexample.util.LocalDateSerializer;
 import com.soshiant.springbootexample.util.ValidatorTestUtil;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,6 @@ import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockServletContext;
@@ -121,12 +121,12 @@ class AuthenticationControllerTest {
   @Test
   void login_Success() throws Exception {
 
-    LoginResponseDto loginResponseDto = TestUtil.buildLoginResponseDto();
+    LoginResponseDto loginResponseDto = DataUtils.buildLoginResponseDto();
     when(authenticationService.authenticate(anyString(),anyString())).thenReturn(loginResponseDto);
     MvcResult result = mockMvc.perform(post("/authenticate/login")
         .contentType(MediaType.APPLICATION_JSON_VALUE)
         .characterEncoding("utf-8")
-        .content(TestUtil.buildLoginRequestDtoAsJson())
+        .content(DataUtils.buildLoginRequestDtoAsJson())
       )
       .andDo(print())
       .andExpect(status().isOk())
@@ -156,7 +156,7 @@ class AuthenticationControllerTest {
     mockMvc.perform(post("/authenticate/login")
         .contentType(MediaType.APPLICATION_JSON_VALUE)
         .characterEncoding("utf-8")
-        .content(TestUtil.buildLoginRequestDtoAsJson())
+        .content(DataUtils.buildLoginRequestDtoAsJson())
       )
       .andDo(print())
       .andExpect(status().isUnauthorized());

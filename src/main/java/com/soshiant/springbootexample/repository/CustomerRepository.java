@@ -20,7 +20,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long>  {
    *
    * @param customerIds customer Ids
    */
-  List<Customer> findByCustomerIdIn(List<Long> customerIds);
+  List<Customer> findByIdIn(List<Long> customerIds);
 
   /**
    * retrieves a customer info from database based on his first name and last name
@@ -47,12 +47,12 @@ public interface CustomerRepository extends JpaRepository<Customer, Long>  {
   Optional<Customer> findByEmailAddress(String emailAddress);
 
 
-  /**
-   * retrieves a customer info from database based on the username
-   *
-   * @param username customer's username
-   */
-  Optional<Customer> findByUserInfo_Username(@Param("username") String username);
+//  /**
+//   * retrieves a customer info from database based on the username
+//   *
+//   * @param username customer's username
+//   */
+//  Optional<Customer> findByUserInfo_Username(@Param("username") String username);
 
   /**
    * retrieves a Employee info from database based on its email address

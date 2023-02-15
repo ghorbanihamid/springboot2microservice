@@ -14,7 +14,9 @@ import com.soshiant.springbootexample.entity.EmployeeAddress;
 import com.soshiant.springbootexample.exception.EmployeeServiceException;
 import com.soshiant.springbootexample.repository.EmployeeAddressesRepository;
 import com.soshiant.springbootexample.repository.EmployeeRepository;
-import com.soshiant.springbootexample.util.TestUtil;
+import com.soshiant.springbootexample.util.DataUtils;
+import com.soshiant.springbootexample.util.LocalDateSerializer;
+
 import java.util.Optional;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.AfterEach;
@@ -55,9 +57,9 @@ class EmployeeServiceImplTest {
   void testRegisterNewEmployeeWithAddressIsSuccess() throws Exception {
 
     Mockito.when(employeeAddressesRepository.save(any(EmployeeAddress.class)))
-        .thenReturn(TestUtil.buildEmployeeAddressObject());
+        .thenReturn(DataUtils.buildEmployeeAddressObject());
 
-    EmployeeAddress result = employeeService.registerEmployee(TestUtil.buildEmployeeDto());
+    EmployeeAddress result = employeeService.registerEmployee(DataUtils.buildEmployeeDto());
     assertThat(result, is(notNullValue()));
     assertThat(result.getEmployee().getEmployeeId(), CoreMatchers.equalTo(EMPLOYEE_ID));
 
@@ -72,7 +74,7 @@ class EmployeeServiceImplTest {
 
     Throwable thrown = assertThrows(
         EmployeeServiceException.class,
-        () -> employeeService.registerEmployee(TestUtil.buildEmployeeDto())
+        () -> employeeService.registerEmployee(DataUtils.buildEmployeeDto())
     );
     assertEquals("QueryTimeout Exception",thrown.getMessage());
   }
@@ -82,7 +84,7 @@ class EmployeeServiceImplTest {
   void testGetEmployeeByValidId() {
 
     Mockito.when(employeeRepository.findById(EMPLOYEE_ID))
-        .thenReturn(Optional.of(TestUtil.buildEmployeeObject()));
+        .thenReturn(Optional.of(DataUtils.buildEmployeeObject()));
 
 
     EmployeeRequestDto employee = employeeService.getEmployee(EMPLOYEE_ID);

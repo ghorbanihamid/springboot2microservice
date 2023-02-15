@@ -1,6 +1,7 @@
 package com.soshiant.springbootexample.repository;
 
 import com.soshiant.springbootexample.entity.UserInfo;
+
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -20,9 +21,20 @@ public interface UserRepository extends JpaRepository<UserInfo, Long>  {
    */
   Optional<UserInfo> findByUsername(@Param("username") String username);
 
+  /**
+   * increase password failed Attempt counter
+   *
+   * @param username userName
+   */
+  @Modifying(clearAutomatically = true)
   @Query("UPDATE UserInfo u SET u.failedAttempt = u.failedAttempt + 1 WHERE u.username = :username")
   Integer increasePasswordRetryAttempts(String username);
 
+  /**
+   * update password failed Attempt counter
+   *
+   * @param username userName
+   */
   @Modifying(clearAutomatically = true)
   @Query("UPDATE UserInfo u SET u.failedAttempt = 0 WHERE u.username = :username")
   int resetPasswordRetryAttempts(@Param("username") String username);

@@ -16,7 +16,7 @@ public interface CustomerAddressesRepository extends JpaRepository<CustomerAddre
    *
    * @param addressId address Id
    */
-  Optional<CustomerAddress> findByAddressId(@Param("addressId") String addressId);
+  Optional<CustomerAddress> findById(@Param("addressId") String addressId);
 
 
 }

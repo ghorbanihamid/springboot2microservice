@@ -7,12 +7,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.io.Serializable;
+
 @Data
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class LoginResponseDto {
+public class LoginResponseDto implements Serializable {
 
   @JsonProperty("username")
   private String username;

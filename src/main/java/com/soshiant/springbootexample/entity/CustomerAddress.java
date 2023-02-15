@@ -7,12 +7,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
 
-@Data
+import lombok.*;
+
+
+@Getter
+@Setter
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,8 +22,9 @@ public class CustomerAddress {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "ADDRESS_ID", nullable = false, updatable = false)
-  private Long addressId;
+// this prevents OneToOne or OneToMany mapping
+//  @Column(name = "ADDRESS_ID", nullable = false, updatable = false)
+  private Long id;
 
   @Column(name = "STREET_NUMBER", nullable = false)
   private String streetNumber;

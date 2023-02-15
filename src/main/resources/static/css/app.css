@@ -1,0 +1,70 @@
+.processorBtn {
+  background: #6c7b7d;
+  background-image: linear-gradient(to bottom, #f8f9fa, #6c757d);
+  border-radius: 7px;
+  text-shadow: 0px 0px 0px #666666;
+  -webkit-box-shadow: 10px 6px 6px #666666;
+  -moz-box-shadow: 10px 6px 6px #666666;
+  box-shadow: 10px 6px 6px #666666;
+  font-family: Arial;
+  color: #ffffff;
+  font-size: 20px;
+  padding: 2px 100px 5px 5px;
+  border: solid #1f628d 2px;
+  text-decoration: none;
+  width:300px;
+  max-width:300px
+}
+
+.processorBtn:hover {
+  background: #B6BCBD;
+  text-decoration: none;
+}
+
+.processorBox {
+   padding: 0.3rem 1rem;
+   line-height: 1.5;
+   border-radius: 0.3rem;
+}
+
+.index-header {
+  height: 50px;
+	background: #3092c7;
+  font-size: 20px;
+  font-family: Arial;
+	text-align: center;
+}
+
+.header {
+  height: 100px;
+	background: #3092c7;
+  font-size: 20px;
+  font-family: Arial;
+	text-align: center;
+	display: flex;
+}
+
+.previous {
+  padding: 0.5rem 1rem;
+  color: #ffffff;
+}
+
+.appName {
+  padding: 0.5rem 1rem;
+  width:85%;
+  color: white;
+}
+
+.footer {
+	position: fixed;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+	text-align: center;
+}
+
+body {
+    background: rgb(116,202,235);
+    background: linear-gradient(90deg, rgba(116,202,235,1) 0%, rgba(3,21,27,1) 100%);
+    min-height: 100vh;
+}

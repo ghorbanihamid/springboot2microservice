@@ -9,7 +9,8 @@ import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 import com.soshiant.springbootexample.service.CustomerService;
-import com.soshiant.springbootexample.util.TestUtil;
+import com.soshiant.springbootexample.util.DataUtils;
+import com.soshiant.springbootexample.util.LocalDateSerializer;
 import com.soshiant.springbootexample.util.ValidatorTestUtil;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +62,7 @@ class CustomerRequestDtoTest {
   void testValidationOfFirstName() throws Exception {
     when(customerService.getCustomers(ArgumentMatchers.anyList())).thenReturn(null);
 
-    CustomerRequestDto customerRequestDto = TestUtil.buildCustomerDto();
+    CustomerRequestDto customerRequestDto = DataUtils.buildCustomerDto();
 
     customerRequestDto.setFirstName("Hamid");
     Set<ConstraintViolation<CustomerRequestDto>> violations = validator.validate(customerRequestDto);

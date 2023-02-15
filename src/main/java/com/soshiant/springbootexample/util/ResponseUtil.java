@@ -19,71 +19,22 @@ public class ResponseUtil {
 
   }
 
-  public static String createLoginSuccessResponse(LoginResponseDto loginResponseDto) {
-
-    return new ResponseDto(SUCCESS,"",getJsonString(loginResponseDto)).toString();
-  }
-
   public static String createSuccessResponse(Object detail) {
-    return new ResponseDto(SUCCESS,"",getJsonString(detail,false))
-      .toString();
-  }
-
-  public static String createSuccessResponse(Object detail, boolean excludeNullFields) {
-    return new ResponseDto(SUCCESS,"",getJsonString(detail,excludeNullFields))
+    String token = "";
+    return new ResponseDto(SUCCESS,"",JacksonUtils.toJson(detail),token)
       .toString();
   }
 
   public static String createErrorResponse(String message) {
-    return createErrorResponse(message, null, false);
-  }
-
-  public static String createErrorResponse(String message, Object detail) {
-    return createErrorResponse(message, detail, false);
+    return createErrorResponse(message, null);
   }
 
   public static String createErrorResponse(String message,
-                                           Object detail,
-                                           boolean excludeNullFields) {
-
-    return new ResponseDto(ERROR,message,getJsonString(detail,excludeNullFields))
+                                           Object detail) {
+    String token = "";
+    return new ResponseDto(ERROR,message,JacksonUtils.toJson(detail),token)
       .toString();
   }
 
-  public static String getJsonString(Object obj) {
-    return getJsonString(obj, false);
-  }
-  public static String getJsonString(Object obj,boolean excludeNullFields) {
-    String objJson = "";
-    try {
-      if (obj != null) {
-        ObjectMapper mapper = new ObjectMapper();
-        // configure ObjectMapper to exclude null fields while serializing
-        if(excludeNullFields) {
-          mapper.setSerializationInclusion(Include.NON_NULL);
-        }
-        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        mapper.setDateFormat(new StdDateFormat().withColonInTimeZone(true));
-        objJson = new ObjectMapper().writeValueAsString(obj);
-      }
-      return objJson;
-    } catch (Exception e) {
-      log.error("Failed to convert input object to JSON String!" + obj.toString());
-      return objJson;
-    }
-  }
 
-  public static Object getObjectFromJsonString(String jsonString) {
-    Object resultObject = null;
-    try {
-      if (StringUtils.isBlank(jsonString)) {
-        return null;
-      }
-      resultObject = new ObjectMapper().readValue(jsonString, Object.class);
-
-    } catch (Exception e) {
-      log.error("Failed to convert input object to JSON String!" + jsonString.toString());
-    }
-    return resultObject;
-  }
 }

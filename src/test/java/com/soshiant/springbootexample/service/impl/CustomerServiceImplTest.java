@@ -18,7 +18,9 @@ import com.soshiant.springbootexample.dto.CustomerUpdateDto;
 import com.soshiant.springbootexample.entity.Customer;
 import com.soshiant.springbootexample.exception.CustomerServiceException;
 import com.soshiant.springbootexample.repository.CustomerRepository;
-import com.soshiant.springbootexample.util.TestUtil;
+import com.soshiant.springbootexample.util.DataUtils;
+import com.soshiant.springbootexample.util.LocalDateSerializer;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -66,11 +68,11 @@ class CustomerServiceImplTest {
   void testRegisterNewCustomer() throws Exception {
 
     Mockito.when(customerRepository.save(any(Customer.class)))
-        .thenReturn(TestUtil.buildCustomerObject());
+        .thenReturn(DataUtils.buildCustomerObject());
 
-    Customer result = customerService.registerCustomer(TestUtil.buildCustomerDto());
+    Customer result = customerService.registerCustomer(DataUtils.buildCustomerDto());
     assertThat(result, is(notNullValue()));
-    assertThat(result.getCustomerId(), CoreMatchers.equalTo(CUSTOMER_ID));
+    assertThat(result.getId(), CoreMatchers.equalTo(CUSTOMER_ID));
 
   }
 
@@ -92,10 +94,10 @@ class CustomerServiceImplTest {
   @Test
   void testUpdateCustomerSuccess() throws Exception {
 
-    Optional<Customer> customer = Optional.of(TestUtil.buildCustomerObject());
+    Optional<Customer> customer = Optional.of(DataUtils.buildCustomerObject());
     Mockito.when(customerRepository.findById(anyLong())).thenReturn(customer);
     Mockito.when(customerRepository.save(any(Customer.class)))
-        .thenReturn(TestUtil.buildCustomerObject());
+        .thenReturn(DataUtils.buildCustomerObject());
     CustomerUpdateDto customerUpdateDto = new CustomerUpdateDto();
     customerUpdateDto.setCustomerId(1L);
     Customer savedCustomer = customerService.updateCustomerInfo(customerUpdateDto);
@@ -108,7 +110,7 @@ class CustomerServiceImplTest {
   @Test
   void testUpdateCustomerThrowsException() {
 
-    Optional<Customer> customer = Optional.of(TestUtil.buildCustomerObject());
+    Optional<Customer> customer = Optional.of(DataUtils.buildCustomerObject());
     Mockito.when(customerRepository.findById(anyLong())).thenReturn(customer);
     Mockito.when(customerRepository.save(any(Customer.class)))
         .thenThrow(new QueryTimeoutException("QueryTimeout Exception"));
@@ -126,13 +128,13 @@ class CustomerServiceImplTest {
   void testGetCustomerByValidId() throws Exception {
 
     Mockito.when(customerRepository.findById(CUSTOMER_ID))
-        .thenReturn(Optional.of(TestUtil.buildCustomerObject()));
+        .thenReturn(Optional.of(DataUtils.buildCustomerObject()));
     ArrayList<Long> customerIds = new ArrayList<>();
     customerIds.add(CUSTOMER_ID);
     List<Customer> customerList = customerService.getCustomers(customerIds);
 
     assertThat(customerList.size(), greaterThanOrEqualTo(1));
-    assertThat(customerList.get(0).getCustomerId(), CoreMatchers.equalTo(CUSTOMER_ID));
+    assertThat(customerList.get(0).getId(), CoreMatchers.equalTo(CUSTOMER_ID));
 
   }
 
@@ -151,7 +153,7 @@ class CustomerServiceImplTest {
   @Test
   void testGetCustomerByMultipleInvalidId() throws Exception {
 
-    Mockito.when(customerRepository.findByCustomerIdIn(anyList())).thenReturn(new ArrayList<>());
+    Mockito.when(customerRepository.findByIdIn(anyList())).thenReturn(new ArrayList<>());
 
     ArrayList<Long> customerIds = new ArrayList<>();
     customerIds.add(CUSTOMER_ID);

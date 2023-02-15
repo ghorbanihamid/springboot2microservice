@@ -6,7 +6,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.validateMockitoUsage;
 
 import com.soshiant.springbootexample.entity.Customer;
-import com.soshiant.springbootexample.util.TestUtil;
+import com.soshiant.springbootexample.util.DataUtils;
+import com.soshiant.springbootexample.util.LocalDateSerializer;
+
 import java.util.Optional;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.AfterEach;
@@ -35,9 +37,9 @@ class CustomerRepositoryTest {
 
   @BeforeEach
   void setUp() {
-    customer = TestUtil.buildCustomerObject();
+    customer = DataUtils.buildCustomerObject();
     // for persisting a new customer (testEntityManager.persist), Id must be null
-    customer.setCustomerId(null);
+    customer.setId(null);
   }
 
   @AfterEach
@@ -49,7 +51,7 @@ class CustomerRepositoryTest {
   void testFindById() {
 
     Customer persistedCustomer = testEntityManager.persist(customer);
-    Optional<Customer> queryResult = customerRepository.findById(persistedCustomer.getCustomerId());
+    Optional<Customer> queryResult = customerRepository.findById(persistedCustomer.getId());
 
     assertThat(queryResult.isPresent(),is(true));
 
@@ -68,7 +70,7 @@ class CustomerRepositoryTest {
     assertThat(queryResult.isPresent(),is(true));
 
     queryResult.ifPresent(result ->
-        assertThat(result.getCustomerId(), CoreMatchers.equalTo(persistedCustomer.getCustomerId())));
+        assertThat(result.getId(), CoreMatchers.equalTo(persistedCustomer.getId())));
 
   }
 
