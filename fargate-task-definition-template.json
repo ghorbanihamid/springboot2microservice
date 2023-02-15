@@ -1,0 +1,23 @@
+{
+  "family": "${SPRING_BOOT_EXAMPLE_ECS_TASK_FAMILY_NAME}",
+  "networkMode": "awsvpc",√
+  "containerDefinitions": [
+    {
+      "name": "SpringBootMicroService",
+      "image": "${IMAGE_NAME}",
+      "portMappings": [
+        {
+          "containerPort": 8500,
+          "protocol": "tcp"
+        }
+      ],
+      "essential": true,
+      "memoryReservation": 300
+    }
+  ],
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "cpu": "4096",
+  "memory": "2048"
+}

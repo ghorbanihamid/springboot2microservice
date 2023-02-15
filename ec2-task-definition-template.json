@@ -1,0 +1,32 @@
+{
+  "family": "${SPRING_BOOT_EXAMPLE_ECS_TASK_FAMILY_NAME}",
+  "containerDefinitions": [
+    {
+      "name": "SpringBootMicroService",
+      "image": "${IMAGE_NAME}",
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "sbms-application-logs",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "sbms"
+        }
+      },
+      "portMappings": [
+        {
+          "containerPort": 8500,
+          "protocol": "tcp"
+        },
+        {
+          "containerPort": 8080,
+          "protocol": "tcp"
+        }
+      ],
+      "essential": true,
+      "memoryReservation": 4096
+    }
+  ],
+  "requiresCompatibilities": [
+    "EC2"
+  ]
+}

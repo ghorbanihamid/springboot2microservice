@@ -1,0 +1,83 @@
+#  Template Java Spring Boot App for Elastic Beanstalk
+
+#  This template allows you to deploy your application as code using AWS Elastic Beanstalk.
+#  The workflow allows validate, linting and security scans on feature branches (as well as master).
+#  The Spring Boot App will be validated and deployed after the code is merged to master.
+
+# Prerequisites: $AWS_ACCESS_KEY_ID, $AWS_SECRET_ACCESS_KEY, $AWS_DEFAULT_REGION setup in the Deployment variables.
+# For advanced cases, please, follow examples from the pipe's README https://bitbucket.org/atlassian/aws-elasticbeanstalk-deploy/src/master/README.md
+
+image: openjdk:11
+
+# enable Docker for your repository
+options:
+  docker: true
+
+definitions:
+  steps:
+    - step: &aws-codeartifact-auth
+        name: AWS CodeArtifact Token Setup
+        image: atlassian/pipelines-awscli
+        script:
+          - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+          - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+          - export AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION
+          - aws codeartifact get-authorization-token --domain clariti --domain-owner 540040862080 --region us-east-1 --query authorizationToken --output text > pass.txt
+        artifacts:
+          - pass.txt
+    - step: &maven-build
+        name: Build and Test Code. Build and publish Docker image.
+        image: maven:3.8.1
+        services:
+          - docker # Enable Docker for your repository
+        caches:
+          - maven
+        script:
+          - export value=$(< pass.txt)
+          - sed -i 's/CODEARTIFACT_AUTH_TOKEN/'"$value"'/g' ./settings.xml
+          - rm -fr ~/.m2/repository/com/clariti/sfcdpagent/
+          - mvn -B verify -s ./settings.xml --file pom.xml
+          - mvn clean install -s ./settings.xml
+          # Modify the commands below to build your repository.
+          # Set the name of the docker image we will be building.
+          - export IMAGE_NAME="${DOCKERHUB_USERNAME}/${BITBUCKET_REPO_SLUG}:${BITBUCKET_BUILD_NUMBER}"
+          # Build the docker image and push to Dockerhub.
+          - docker build -t "$IMAGE_NAME" .
+          - docker login --username "$DOCKERHUB_USERNAME" --password "$DOCKERHUB_PASSWORD"
+          - docker push "$IMAGE_NAME"
+        after-script:
+          - pipe: atlassian/checkstyle-report:0.3.0
+            variables:
+              DEBUG: "true"
+    - step: &deploy-to-ecs
+        name: Deploy to ECS
+        script:
+          - apt-get update && apt-get install gettext-base
+          # Replace the docker image name in the task definition with the newly pushed image.
+          - export IMAGE_NAME="${DOCKERHUB_USERNAME}/${BITBUCKET_REPO_SLUG}:${BITBUCKET_BUILD_NUMBER}"
+          - envsubst < ec2-task-definition-template.json >  task-definition.json
+
+          # Update the task definition.
+          - pipe: atlassian/aws-ecs-deploy:1.0.0
+            variables:
+              DEBUG: "true"
+              AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+              AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+              AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+              CLUSTER_NAME: $LFT_ECS_CLUSTER_NAME
+              SERVICE_NAME: $LFT_ECS_SERVICE_NAME
+              TASK_DEFINITION: "task-definition.json"
+
+pipelines:
+  default:
+    - step:
+        name: Security Scan
+        script:
+          # Run a security scan for sensitive data.
+          # See more security tools at https://bitbucket.org/product/features/pipelines/integrations?&category=security
+          - pipe: atlassian/git-secrets-scan:0.5.1
+  branches:
+    master:
+      - step: *aws-codeartifact-auth
+      - step: *maven-build
+      - step: *deploy-to-ecs
